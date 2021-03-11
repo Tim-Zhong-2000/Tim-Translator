@@ -78,7 +78,7 @@ export class BaiduTranslatorCrawler extends TranslateEngine {
     setTimeout(() => {
       console.log("Update config using autoConfig");
       this.autoConfig();
-    }, 60 * 60 * 1000);
+    }, 6 * 60 * 60 * 1000);
   }
 
   getCookie(res: any) {
