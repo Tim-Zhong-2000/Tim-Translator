@@ -21,5 +21,12 @@
       "serviceProvicerName": "baidu api translator",
       "saveFilePath": "暂时未实现保存功能，此字段无效"
     }
+  },
+  "serverConfig": {
+    "listen": "0.0.0.0",
+    "port": 3000,
+    "translator": true,
+    "textractor": true,
+    "ocr": false
   }
 }

@@ -40,7 +40,7 @@ const baiduAPIManager = new BaiduTranslatorApiManager(
 // ...
 
 // express配置
-const PORT = 3000;
+const PORT = CONFIG.serverConfig.port;
 
 // express初始化
 const app = express();
@@ -66,11 +66,11 @@ app.get("/baidu/langlist", (req, res) => {
   res.send(JSON.stringify(baiduLangList));
   res.end();
 });
-app.get("/baidu/reload",async (req,res)=>{
+app.get("/baidu/reload", async (req, res) => {
   await baiduTranslatorCrawler.autoConfig();
   res.send("Finished");
   res.end();
-})
+});
 
 /// 百度API
 app.get("/baiduapi/:srcLang/:destLang/:src", async (req, res) => {
@@ -93,6 +93,19 @@ app.get("/info/entrys", (req, res) => {
       { name: "api", value: "baiduapi" },
     ])
   );
+  res.end();
+});
+
+/// 服务发现
+app.get("/servicediscovery", (req, res) => {
+  const png = fs.createReadStream("./servicediscovery.png");
+  png.pipe(res);
+});
+
+/// 通告启用的服务
+app.get("/servicediscovery/info", (req, res) => {
+  const info = CONFIG.serverConfig;
+  res.send(JSON.stringify(info));
   res.end();
 });
 
