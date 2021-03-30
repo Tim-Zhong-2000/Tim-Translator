@@ -15,6 +15,10 @@ export class BaiduTranslatorAPI extends TranslateEngine {
   private SALT = "1435660288";
   private ttsEnabled: boolean;
 
+  private get isConfigEmpty() {
+    return this.APPID === "" && this.KEY === "";
+  }
+
   constructor(config: BaiduTranslatorAPIConfig) {
     super();
     if (!!config) {
@@ -32,6 +36,16 @@ export class BaiduTranslatorAPI extends TranslateEngine {
   ) {
     if (srcLang === destLang) {
       return generateDestPayload(true, "verified", src, src, srcLang, destLang);
+    }
+    if (this.isConfigEmpty) {
+      return generateDestPayload(
+        false,
+        "verified",
+        src,
+        "此翻译服务器未设置API账户",
+        srcLang,
+        destLang
+      );
     }
     const res = await axios.get(
       `https://fanyi-api.baidu.com/api/trans/vip/translate` +
