@@ -3,7 +3,7 @@
  * @author Tim-Zhong-2000
  */
 import { DefaultFilter } from "../filter/filter";
-import { DestPayload } from "../type/type";
+import { Payload } from "../type/type";
 import { CacheEngine } from "./cacheEngine";
 import { TranslateEngine } from "./translateEngine";
 
@@ -30,9 +30,9 @@ export abstract class TranslateManager {
     src: string,
     srcLang: string,
     destLang: string
-  ): Promise<DestPayload>;
+  ): Promise<Payload>;
 
-  abstract writeCache(dest: DestPayload): void;
+  abstract writeCache(dest: Payload): void;
 
   abstract readCache(src: string, srcLang: string, destLang: string): void;
 }

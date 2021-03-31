@@ -4,8 +4,8 @@
  */
 
 import { TranslateEngine } from "../abstract/translateEngine";
-import { DestPayload } from "../type/type";
-import { generateDestPayload } from "../utils/generateDestPayload";
+import { Payload } from "../type/type";
+import { generatePayload } from "../utils/generatePayload";
 const translate = require("node-google-translate-skidz"); // not support ts
 
 export class GoogleTranslatorCrawler extends TranslateEngine {
@@ -13,7 +13,7 @@ export class GoogleTranslatorCrawler extends TranslateEngine {
     src: string,
     srcLang: string = "en",
     destLang: string = "zh"
-  ): Promise<DestPayload> {
+  ): Promise<Payload> {
     const req: Promise<string> = new Promise((resolve, reject) => {
       translate(
         { text: src, source: srcLang, target: destLang },
@@ -27,7 +27,7 @@ export class GoogleTranslatorCrawler extends TranslateEngine {
     });
     const dest = await req;
     if (!dest) {
-      return generateDestPayload(
+      return generatePayload(
         false,
         "ai",
         src,
@@ -36,7 +36,7 @@ export class GoogleTranslatorCrawler extends TranslateEngine {
         destLang
       );
     } else {
-      return generateDestPayload(true, "ai", src, dest, srcLang, destLang);
+      return generatePayload(true, "ai", src, dest, srcLang, destLang);
     }
   }
 

@@ -6,8 +6,8 @@
 import axios from "axios";
 import md5 from "md5";
 import { TranslateEngine } from "../abstract/translateEngine";
-import { DestPayload, BaiduTranslatorAPIConfig } from "../type/type";
-import { generateDestPayload } from "../utils/generateDestPayload";
+import { Payload, BaiduTranslatorAPIConfig } from "../type/type";
+import { generatePayload } from "../utils/generatePayload";
 
 export class BaiduTranslatorAPI extends TranslateEngine {
   private APPID: string;
@@ -35,10 +35,10 @@ export class BaiduTranslatorAPI extends TranslateEngine {
     destLang: string = "zh"
   ) {
     if (srcLang === destLang) {
-      return generateDestPayload(true, "verified", src, src, srcLang, destLang);
+      return generatePayload(true, "verified", src, src, srcLang, destLang);
     }
     if (this.isConfigEmpty) {
-      return generateDestPayload(
+      return generatePayload(
         false,
         "verified",
         src,
@@ -55,7 +55,7 @@ export class BaiduTranslatorAPI extends TranslateEngine {
     );
     if (!!res && !!res.data) {
       try {
-        let destPayload = generateDestPayload(
+        let Payload = generatePayload(
           true,
           "ai",
           src,
@@ -64,14 +64,14 @@ export class BaiduTranslatorAPI extends TranslateEngine {
           destLang
         );
         if (this.ttsEnabled) {
-          destPayload = Object.assign(destPayload, {
+          Payload = Object.assign(Payload, {
             srcTTS: res.data["src_tts"],
             destTTS: res.data["dst_tts"],
-          } as DestPayload);
+          } as Payload);
         }
-        return destPayload;
+        return Payload;
       } catch (error) {
-        return generateDestPayload(
+        return generatePayload(
           false,
           "ai",
           src,

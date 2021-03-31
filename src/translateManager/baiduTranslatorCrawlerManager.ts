@@ -6,8 +6,8 @@ import { TranslateManager } from "../abstract/translateManager";
 import { MapCache } from "../cacheEngines/mapCache";
 import { DefaultFilter } from "../filter/filter";
 import { BaiduTranslatorCrawler } from "../translateEngines/baiduTranslatorCrawler";
-import { DestPayload } from "../type/type";
-import { generateDestPayload } from "../utils/generateDestPayload";
+import { Payload } from "../type/type";
+import { generatePayload } from "../utils/generatePayload";
 
 export class BaiduTranslateManager extends TranslateManager {
   constructor(
@@ -22,8 +22,8 @@ export class BaiduTranslateManager extends TranslateManager {
     src: string,
     srcLang: string,
     destLang: string
-  ): Promise<DestPayload> {
-    let dest: DestPayload = null;
+  ): Promise<Payload> {
+    let dest: Payload = null;
 
     const filterResult = this.filter.exec(src, srcLang);
     switch (filterResult.type) {
@@ -31,7 +31,7 @@ export class BaiduTranslateManager extends TranslateManager {
         src = filterResult.text;
         break;
       case "proxy":
-        dest = generateDestPayload(
+        dest = generatePayload(
           true,
           "verified",
           src,
@@ -41,7 +41,7 @@ export class BaiduTranslateManager extends TranslateManager {
         );
         return dest;
       case "block":
-        dest = generateDestPayload(
+        dest = generatePayload(
           true,
           "ai",
           "",
@@ -61,7 +61,7 @@ export class BaiduTranslateManager extends TranslateManager {
           this.writeCache(dest);
         }
       } catch (error) {
-        dest = generateDestPayload(
+        dest = generatePayload(
           false,
           "ai",
           src,
@@ -74,11 +74,11 @@ export class BaiduTranslateManager extends TranslateManager {
     return dest;
   }
 
-  writeCache(dest: DestPayload): void {
+  writeCache(dest: Payload): void {
     this.cacheEngine.insert(dest);
   }
 
-  readCache(src: string, srcLang: string, destLang: string): DestPayload {
+  readCache(src: string, srcLang: string, destLang: string): Payload {
     return this.cacheEngine.fetch(src, srcLang, destLang);
   }
 }

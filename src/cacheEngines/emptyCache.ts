@@ -3,18 +3,18 @@
  * @author Tim-Zhong-2000
  */
 import { CacheEngine } from "../abstract/cacheEngine";
-import { DestPayload } from "../type/type";
+import { Payload } from "../type/type";
 
 export class EmptyCache extends CacheEngine<null> {
   constructor() {
     super();
   }
 
-  fetch(src: string, srcLang: string, destLang: string): DestPayload {
+  fetch(src: string, srcLang: string, destLang: string): Payload {
     throw new Error("MISS");
   }
 
-  insert(dest: DestPayload): void {
+  insert(dest: Payload): void {
     return;
   }
 }

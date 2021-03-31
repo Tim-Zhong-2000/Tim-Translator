@@ -57,7 +57,7 @@ app.use(cors());
 app.use(morgan("combined"));
 
 // 路由
-app.get("/", (req, res) => {
+app.get("/", (_req, res) => {
   res.send("123");
 });
 
@@ -69,11 +69,11 @@ app.get("/baidu/:srcLang/:destLang/:src", async (req, res) => {
   res.send(JSON.stringify(dest));
   res.end();
 });
-app.get("/baidu/langlist", (req, res) => {
+app.get("/baidu/langlist", (_req, res) => {
   res.send(JSON.stringify(baiduLangList));
   res.end();
 });
-app.get("/baidu/reload", async (req, res) => {
+app.get("/baidu/reload", async (_req, res) => {
   await baiduTranslatorCrawler.autoConfig();
   res.send("Finished");
   res.end();
@@ -87,13 +87,13 @@ app.get("/baiduapi/:srcLang/:destLang/:src", async (req, res) => {
   res.send(JSON.stringify(dest));
   res.end();
 });
-app.get("/baiduapi/langlist", (req, res) => {
+app.get("/baiduapi/langlist", (_req, res) => {
   res.send(JSON.stringify(baiduApiLangList));
   res.end();
 });
 
 /// 返回服务类型
-app.get("/info/entrys", (req, res) => {
+app.get("/info/entrys", (_req, res) => {
   const list = [];
   if (CONFIG["baidu"].enabeld) {
     list.push({ name: "baidu", value: "baidu" });
@@ -106,13 +106,13 @@ app.get("/info/entrys", (req, res) => {
 });
 
 /// 服务发现
-app.get("/servicediscovery", (req, res) => {
+app.get("/servicediscovery", (_req, res) => {
   const png = fs.createReadStream("./servicediscovery.png");
   png.pipe(res);
 });
 
 /// 通告启用的服务
-app.get("/servicediscovery/info", (req, res) => {
+app.get("/servicediscovery/info", (_req, res) => {
   const info = CONFIG.serverConfig;
   res.send(JSON.stringify(info));
   res.end();

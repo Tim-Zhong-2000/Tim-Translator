@@ -39,7 +39,7 @@ export interface SqliteCacheConfig {
   filePath?: string;
 }
 
-export interface DestPayload {
+export interface Payload {
   success: boolean;
   level: "ai" | "user" | "verified";
   src: string;

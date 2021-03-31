@@ -3,14 +3,14 @@
  * @author Tim-Zhong-2000
  */
 
-import { DestPayload } from "../type/type";
+import { Payload } from "../type/type";
 
 export abstract class TranslateEngine {
   abstract translate(
     src: string,
     srcLang: string,
     destLang: string
-  ): Promise<DestPayload>;
-  abstract translate(src: string): Promise<DestPayload>;
+  ): Promise<Payload>;
+  abstract translate(src: string): Promise<Payload>;
   abstract setConfig(config: any): void;
 }

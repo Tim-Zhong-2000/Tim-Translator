@@ -7,7 +7,7 @@ import qs from "qs";
 import { collapseTextChangeRangesAcrossMultipleVersions } from "typescript";
 import { TranslateEngine } from "../abstract/translateEngine";
 import { BaiduTranslatorConfig, BaiduPayload } from "../type/type";
-import { generateDestPayload } from "../utils/generateDestPayload";
+import { generatePayload } from "../utils/generatePayload";
 
 export class BaiduTranslatorCrawler extends TranslateEngine {
   configReady = false;
@@ -107,7 +107,7 @@ export class BaiduTranslatorCrawler extends TranslateEngine {
     destLang: string = "zh"
   ) {
     if (srcLang === destLang) {
-      return generateDestPayload(true, "verified", src, src, srcLang, destLang);
+      return generatePayload(true, "verified", src, src, srcLang, destLang);
     }
     if (!this.configReady)
       throw new Error("Please WAIT: auto config is not finished");
@@ -119,7 +119,7 @@ export class BaiduTranslatorCrawler extends TranslateEngine {
       { headers: header }
     );
     try {
-      return generateDestPayload(
+      return generatePayload(
         true,
         "ai",
         src,
@@ -128,7 +128,7 @@ export class BaiduTranslatorCrawler extends TranslateEngine {
         destLang
       );
     } catch (error) {
-      return generateDestPayload(
+      return generatePayload(
         false,
         "ai",
         src,

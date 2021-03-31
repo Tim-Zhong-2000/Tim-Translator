@@ -5,8 +5,8 @@ import { TranslateManager } from "../abstract/translateManager";
 import { MapCache } from "../cacheEngines/mapCache";
 import { DefaultFilter } from "../filter/filter";
 import { BaiduTranslatorAPI } from "../translateEngines/baiduTranslatorApi";
-import { DestPayload } from "../type/type";
-import { generateDestPayload } from "../utils/generateDestPayload";
+import { Payload } from "../type/type";
+import { generatePayload } from "../utils/generatePayload";
 
 export class BaiduTranslatorApiManager extends TranslateManager {
   constructor(
@@ -21,8 +21,8 @@ export class BaiduTranslatorApiManager extends TranslateManager {
     src: string,
     srcLang: string,
     destLang: string
-  ): Promise<DestPayload> {
-    let dest: DestPayload = null;
+  ): Promise<Payload> {
+    let dest: Payload = null;
 
     const filterResult = this.filter.exec(src, srcLang);
     switch (filterResult.type) {
@@ -30,7 +30,7 @@ export class BaiduTranslatorApiManager extends TranslateManager {
         src = filterResult.text;
         break;
       case "proxy":
-        dest = generateDestPayload(
+        dest = generatePayload(
           true,
           "verified",
           src,
@@ -40,7 +40,7 @@ export class BaiduTranslatorApiManager extends TranslateManager {
         );
         return dest;
       case "block":
-        dest = generateDestPayload(
+        dest = generatePayload(
           true,
           "ai",
           "",
@@ -58,7 +58,7 @@ export class BaiduTranslatorApiManager extends TranslateManager {
         dest = await this.translateEngine.translate(src, srcLang, destLang);
         if (dest.success) this.writeCache(dest);
       } catch (error) {
-        dest = generateDestPayload(
+        dest = generatePayload(
           false,
           "ai",
           src,
@@ -72,12 +72,12 @@ export class BaiduTranslatorApiManager extends TranslateManager {
   }
 
   writeCache(
-    dest: DestPayload
+    dest: Payload
   ): void {
     this.cacheEngine.insert(dest);
   }
 
-  readCache(src: string, srcLang: string, destLang: string): DestPayload {
+  readCache(src: string, srcLang: string, destLang: string): Payload {
     return this.cacheEngine.fetch(src, srcLang, destLang);
   }
 }
