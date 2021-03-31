@@ -23,7 +23,7 @@ export class BaiduTranslateManager extends TranslateManager {
     srcLang: string,
     destLang: string
   ): Promise<DestPayload> {
-    let result: DestPayload = null;
+    let dest: DestPayload = null;
 
     const filterResult = this.filter.exec(src, srcLang);
     switch (filterResult.type) {
@@ -31,7 +31,7 @@ export class BaiduTranslateManager extends TranslateManager {
         src = filterResult.text;
         break;
       case "proxy":
-        result = generateDestPayload(
+        dest = generateDestPayload(
           true,
           "verified",
           src,
@@ -39,9 +39,9 @@ export class BaiduTranslateManager extends TranslateManager {
           srcLang,
           destLang
         );
-        return result;
+        return dest;
       case "block":
-        result = generateDestPayload(
+        dest = generateDestPayload(
           true,
           "ai",
           "",
@@ -49,19 +49,19 @@ export class BaiduTranslateManager extends TranslateManager {
           srcLang,
           destLang
         );
-        return result;
+        return dest;
     }
 
     try {
-      result = this.readCache(src, srcLang, destLang);
+      dest = this.readCache(src, srcLang, destLang);
     } catch (error) {
       try {
-        result = await this.translateEngine.translate(src, srcLang, destLang);
-        if (result.success) {
-          this.writeCache(src, srcLang, destLang, result);
+        dest = await this.translateEngine.translate(src, srcLang, destLang);
+        if (dest.success) {
+          this.writeCache(dest);
         }
       } catch (error) {
-        result = generateDestPayload(
+        dest = generateDestPayload(
           false,
           "ai",
           src,
@@ -71,16 +71,11 @@ export class BaiduTranslateManager extends TranslateManager {
         );
       }
     }
-    return result;
+    return dest;
   }
 
-  writeCache(
-    src: string,
-    srcLang: string,
-    destLang: string,
-    dest: DestPayload
-  ): void {
-    this.cacheEngine.insert(src, srcLang, destLang, dest);
+  writeCache(dest: DestPayload): void {
+    this.cacheEngine.insert(dest);
   }
 
   readCache(src: string, srcLang: string, destLang: string): DestPayload {

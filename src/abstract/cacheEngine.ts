@@ -12,9 +12,6 @@ export abstract class CacheEngine<T = Map<string, DestPayload>> {
   abstract fetch(src: string, srcLang: string, destLang: string): DestPayload;
 
   abstract insert(
-    src: string,
-    srcLang: string,
-    destLang: string,
     dest: DestPayload
   ): void;
 

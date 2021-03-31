@@ -23,9 +23,9 @@ export class MapCache extends CacheEngine<Map<string, DestPayload>> {
     return result;
   }
 
-  insert(src: string, srcLang: string, destLang: string, dest: DestPayload): void {
+  insert(dest: DestPayload): void {
     const result = this.db.set(
-      this.generateHashKey(src, srcLang, destLang),
+      this.generateHashKey(dest.src, dest.srcLang, dest.destLang),
       dest
     );
     if (!result) {

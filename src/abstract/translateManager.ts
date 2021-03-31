@@ -25,19 +25,14 @@ export abstract class TranslateManager {
       throw new Error("translateEngine or cacheEngine missing");
     }
   }
-  
+
   abstract translate(
     src: string,
     srcLang: string,
     destLang: string
   ): Promise<DestPayload>;
 
-  abstract writeCache(
-    src: string,
-    srcLang: string,
-    destLang: string,
-    dest: DestPayload
-  ): void;
+  abstract writeCache(dest: DestPayload): void;
 
   abstract readCache(src: string, srcLang: string, destLang: string): void;
 }

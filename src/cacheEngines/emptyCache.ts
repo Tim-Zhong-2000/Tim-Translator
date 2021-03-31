@@ -14,12 +14,7 @@ export class EmptyCache extends CacheEngine<null> {
     throw new Error("MISS");
   }
 
-  insert(
-    src: string,
-    srcLang: string,
-    destLang: string,
-    dest: DestPayload
-  ): void {
+  insert(dest: DestPayload): void {
     return;
   }
 }
