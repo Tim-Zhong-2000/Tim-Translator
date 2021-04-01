@@ -43,13 +43,11 @@ export class GoogleTranslatorCrawler extends TranslateEngine {
     src: string,
     srcLang: string,
     destLang: string
-  ): Promise<any> {
-    src = encodeURI(src).trim();
+  ): Promise<string> {
     const api = "https://translate.google.cn/translate_a/single";
     const url = `${api}?client=t&sl=${srcLang}&tl=${destLang}&dt=rm&dt=t&tk=${this.googleToken(
       src
-    )}&q=${src}`;
-
+    )}&q=${encodeURIComponent(src)}`;
     return new Promise((resolve, reject) => {
       axios
         .get(url, {
@@ -57,12 +55,10 @@ export class GoogleTranslatorCrawler extends TranslateEngine {
         })
         .then((res) => {
           if (!!res.data) {
-            resolve(res.data[0][0][0]);
+            resolve(res.data[0][0][0] as string);
           }
         })
-        .catch((e) => {
-          reject();
-        });
+        .catch((e) => reject);
     });
   }
 
