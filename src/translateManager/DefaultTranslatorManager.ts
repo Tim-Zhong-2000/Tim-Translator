@@ -1,16 +1,16 @@
 /**
- * @description 百度翻译API总模块
+ * @description 管理模块
  */
+import { TranslateEngine } from "../abstract/translateEngine";
 import { TranslateManager } from "../abstract/translateManager";
 import { MapCache } from "../cacheEngines/mapCache";
 import { DefaultFilter } from "../filter/filter";
-import { BaiduTranslatorAPI } from "../translateEngines/baiduTranslatorApi";
 import { Payload } from "../type/type";
 import { generatePayload } from "../utils/generatePayload";
 
-export class BaiduTranslatorApiManager extends TranslateManager {
+export class DefaultTranslatorManager extends TranslateManager {
   constructor(
-    translateEngine: BaiduTranslatorAPI,
+    translateEngine: TranslateEngine,
     cacheEngine: MapCache,
     filter: DefaultFilter
   ) {

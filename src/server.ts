@@ -5,13 +5,11 @@ import morgan from "morgan";
 import os from "os";
 import { MapCache } from "./cacheEngines/mapCache";
 import { BaiduTranslatorCrawler } from "./translateEngines/baiduTranslatorCrawler";
-import { BaiduTranslateManager } from "./translateManager/baiduTranslatorCrawlerManager";
 import { BaiduTranslatorAPI } from "./translateEngines/baiduTranslatorApi";
-import { BaiduTranslatorApiManager } from "./translateManager/baiduTranslatorApiManager";
+import { DefaultTranslatorManager } from "./translateManager/DefaultTranslatorManager";
 import { baiduApiLangList, baiduLangList, googleLanglist } from "./langlist";
 import { DefaultFilter } from "./filter/filter";
 import { GoogleTranslatorCrawler } from "./translateEngines/googleTranslatorCrawler";
-import { GoogleTranslateManager } from "./translateManager/googleTranslatorCrawlerManager";
 
 // 加载所有配置
 const CONFIG = JSON.parse(
@@ -67,7 +65,7 @@ if (CONFIG["baidu"].enabled) {
   const baiduTranslatorFilter = new DefaultFilter(
     CONFIG["baidu"].filterSetting
   );
-  const baiduCrawlerManager = new BaiduTranslateManager(
+  const baiduCrawlerManager = new DefaultTranslatorManager(
     baiduTranslatorCrawler,
     baiduTranslatorCrawlerCache,
     baiduTranslatorFilter
@@ -102,7 +100,7 @@ if (CONFIG["baiduapi"].enabled) {
   const baiduTranslatorAPIFilter = new DefaultFilter(
     CONFIG["baiduapi"].filterSetting
   );
-  const baiduAPIManager = new BaiduTranslatorApiManager(
+  const baiduAPIManager = new DefaultTranslatorManager(
     baiduTranslatorAPI,
     baiduTranslatorAPICache,
     baiduTranslatorAPIFilter
@@ -132,7 +130,7 @@ if (CONFIG["google"].enabled) {
   const googleTranslatorAPIFilter = new DefaultFilter(
     CONFIG["google"].filterSetting
   );
-  const googleTranslateManager = new GoogleTranslateManager(
+  const googleTranslateManager = new DefaultTranslatorManager(
     googleTranslatorAPI,
     googleTranslatorAPICache,
     googleTranslatorAPIFilter
