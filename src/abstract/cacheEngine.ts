@@ -2,6 +2,7 @@
  * @description 缓存抽象类
  * @author Tim-Zhong-2000
  */
+
 import md5 from "md5";
 import { CacheIdentity, Payload } from "../type/type";
 
@@ -11,9 +12,9 @@ export abstract class CacheEngine<T = Map<string, Payload>> {
 
   abstract fetch(src: string, srcLang: string, destLang: string): Payload;
 
-  abstract insert(
-    dest: Payload
-  ): void;
+  abstract insert(dest: Payload): void;
+
+  abstract export(): string;
 
   hash(str: string): string {
     return md5(str);
@@ -24,7 +25,7 @@ export abstract class CacheEngine<T = Map<string, Payload>> {
       src: src,
       srcLang: srcLang,
       destLang: destLang,
-      serviceProvider: this.serivceProviderName
+      serviceProvider: this.serivceProviderName,
     };
     return this.hash(JSON.stringify(origin));
   }

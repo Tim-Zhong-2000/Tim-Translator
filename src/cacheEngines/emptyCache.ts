@@ -2,6 +2,7 @@
  * @description 空缓存，不实现任何缓存功能，只提供空接口。
  * @author Tim-Zhong-2000
  */
+
 import { CacheEngine } from "../abstract/cacheEngine";
 import { Payload } from "../type/type";
 
@@ -16,5 +17,9 @@ export class EmptyCache extends CacheEngine<null> {
 
   insert(dest: Payload): void {
     return;
+  }
+
+  export() {
+    return "cache disabled";
   }
 }

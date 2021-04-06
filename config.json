@@ -9,6 +9,7 @@
     },
     "cacheSetting": {
       "serviceProviderName": "baidu translator",
+      "exportable": false,
       "db": {}
     },
     "filterSetting": {
@@ -28,6 +29,7 @@
     },
     "cacheSetting": {
       "serviceProviderName": "baidu api translator",
+      "exportable": false,
       "db": {}
     },
     "filterSetting": {
@@ -45,6 +47,7 @@
     },
     "cacheSetting": {
       "serviceProviderName": "google translator",
+      "exportable": false,
       "db": {}
     },
     "filterSetting": {
