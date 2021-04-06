@@ -29,15 +29,22 @@ export interface CacheIdentity {
   serviceProvider: string;
 }
 
-export interface MapCacheConfig {
-  serviceProviderName: string; // 翻译服务提供商名称
-  filePath?: string; // 持久化
+export interface Database {
+  host: string;
+  port: number;
+  user: string;
+  password: string;
+  database: string;
 }
 
-export interface SqliteCacheConfig {
-  serviceProviderName: string;
-  filePath?: string;
+export interface CacheBase {
+  serviceProviderName: string; // 翻译服务提供商名称
+  db?: Database;
 }
+
+export interface MapCacheConfig extends CacheBase {}
+
+export interface SqliteCacheConfig extends CacheBase {}
 
 export interface Payload {
   success: boolean;
