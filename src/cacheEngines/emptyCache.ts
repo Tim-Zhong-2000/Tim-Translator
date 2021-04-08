@@ -11,7 +11,7 @@ export class EmptyCache extends CacheEngine<null> {
     super();
   }
 
-  fetch(src: string, srcLang: string, destLang: string): Payload {
+  fetch(src: string, srcLang: string, destLang: string): Promise<Payload> {
     throw new Error("MISS");
   }
 

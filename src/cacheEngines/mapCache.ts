@@ -16,14 +16,16 @@ export class MapCache extends CacheEngine<Map<string, Payload>> {
     this.exportable = config.exportable || false;
   }
 
-  fetch(src: string, srcLang: string, destLang: string): Payload {
-    const result = this.db.get(this.generateHashKey(src, srcLang, destLang));
-    if (!result) {
-      console.log(`MISS:\t${this.generateHashKey(src, srcLang, destLang)}`);
-      throw new Error("MISS");
-    }
-    console.log(`HIT:\t${this.generateHashKey(src, srcLang, destLang)}`);
-    return result;
+  fetch(src: string, srcLang: string, destLang: string): Promise<Payload> {
+    return new Promise((resolve, reject) => {
+      const result = this.db.get(this.generateHashKey(src, srcLang, destLang));
+      if (!result) {
+        console.log(`MISS:\t${decodeURI(src)}\thash:\t${this.generateHashKey(src, srcLang, destLang)}`);
+        throw new Error("MISS");
+      }
+      console.log(`HIT:\t${decodeURI(src)}\thash:\t${this.generateHashKey(src, srcLang, destLang)}`);
+      resolve(result);
+    });
   }
 
   insert(dest: Payload): void {
