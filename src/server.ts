@@ -97,7 +97,7 @@ if (CONFIG["baiduapi"].enabled) {
   const baiduTranslatorAPI = new BaiduTranslatorAPI(
     CONFIG["baiduapi"].translatorSetting
   );
-  const baiduTranslatorAPICache = new MapCache(CONFIG["baiduapi"].cacheSetting);
+  const baiduTranslatorAPICache = new SqliteCache(CONFIG["baiduapi"].cacheSetting);
   const baiduTranslatorAPIFilter = new DefaultFilter(
     CONFIG["baiduapi"].filterSetting
   );
@@ -127,7 +127,7 @@ if (CONFIG["google"].enabled) {
   const googleTranslatorCrawler = new GoogleTranslatorCrawler(
     CONFIG["google"].translatorSetting
   );
-  const googleTranslatorCrawlerCache = new MapCache(CONFIG["google"].cacheSetting);
+  const googleTranslatorCrawlerCache = new SqliteCache(CONFIG["google"].cacheSetting);
   const googleTranslatorCrawlerFilter = new DefaultFilter(
     CONFIG["google"].filterSetting
   );

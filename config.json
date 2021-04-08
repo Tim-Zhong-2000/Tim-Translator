@@ -32,7 +32,9 @@
     "cacheSetting": {
       "serviceProviderName": "baidu api translator",
       "exportable": false,
-      "db": {}
+      "db": {
+        "host": "./baiduApi.db"
+      }
     },
     "filterSetting": {
       "banPrefixs": ["Textractor:", "vnreng:", "抓取服务器"],
@@ -50,7 +52,9 @@
     "cacheSetting": {
       "serviceProviderName": "google translator",
       "exportable": false,
-      "db": {}
+      "db": {
+        "host": "./google.db"
+      }
     },
     "filterSetting": {
       "banPrefixs": ["Textractor:", "vnreng:", "抓取服务器"],
