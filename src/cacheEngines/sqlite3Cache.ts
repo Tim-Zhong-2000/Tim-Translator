@@ -17,6 +17,8 @@ export class SqliteCache extends CacheEngine<sqlite3.Database> {
     this.exportable = config.exportable || false;
     this.db.run(
       "CREATE TABLE IF NOT EXISTS cache (\
+            hash        TEXT      NOT NULL,\
+            provider    TEXT      NOT NULL,\
             level       INTERGER  NOT NULL,\
             src         TEXT      NOT NULL,\
             dest        TEXT      NOT NULL,\
@@ -34,12 +36,14 @@ export class SqliteCache extends CacheEngine<sqlite3.Database> {
     srcLang: string,
     destLang: string
   ): Promise<Payload> {
+    const reqHash = this.generateHashKey(src, srcLang, destLang);
     const sqliteProc: Promise<Payload[]> = new Promise((resolve, reject) => {
       const rows: Payload[] = [];
       const stmt = this.db.prepare(
-        "SELECT * FROM cache WHERE src=(?) AND srcLang=(?) AND destLang=(?) LIMIT 5"
+        "SELECT level,src,dest,srcLang,destLang FROM cache \
+          WHERE hash=(?)"
       );
-      stmt.run(src, srcLang, destLang);
+      stmt.run(reqHash);
       stmt.each((err: Error, row: Payload) => {
         if (err) reject(err);
         rows.push(row);
@@ -51,7 +55,7 @@ export class SqliteCache extends CacheEngine<sqlite3.Database> {
     });
     const allResult = await sqliteProc;
     if (allResult) {
-      console.log(`HIT:\t${decodeURI(src)}`)
+      console.log(`HIT:\t${decodeURI(src)}`);
       return this.optimizeResults(allResult);
     } else {
       console.log(`MISS:\t${decodeURI(src)}`);
@@ -71,8 +75,22 @@ export class SqliteCache extends CacheEngine<sqlite3.Database> {
       ttsSrc,
       ttsDest,
     } = payload;
-    const stmt = this.db.prepare("INSERT INTO cache VALUES (?,?,?,?,?,?,?,?)");
-    stmt.run(level, src, dest, srcLang, destLang, tts, ttsSrc, ttsDest);
+    const reqHash = this.generateHashKey(src, destLang, destLang);
+    const stmt = this.db.prepare(
+      "INSERT INTO cache VALUES (?,?,?,?,?,?,?,?,?,?)"
+    );
+    stmt.run(
+      reqHash,
+      this.serivceProviderName,
+      level,
+      src,
+      dest,
+      srcLang,
+      destLang,
+      tts,
+      ttsSrc,
+      ttsDest
+    );
     stmt.finalize();
   }
 
