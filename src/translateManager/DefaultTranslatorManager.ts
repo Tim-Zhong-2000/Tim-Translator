@@ -6,7 +6,6 @@
 import { CacheEngine } from "../abstract/cacheEngine";
 import { TranslateEngine } from "../abstract/translateEngine";
 import { TranslateManager } from "../abstract/translateManager";
-import { MapCache } from "../cacheEngines/mapCache";
 import { DefaultFilter } from "../filter/filter";
 import { FilterType, Payload, TranslateLevel } from "../type/type";
 import { generatePayload } from "../utils/generatePayload";
