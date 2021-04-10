@@ -58,7 +58,6 @@ export class SqliteCache extends CacheEngine<sqlite3.Database> {
         resolve(rows);
       });
     });
-
     const allResult = await sqliteProc;
     if (allResult && allResult.length > 0) {
       console.log(`HIT:\t${decodeURI(src)}`);
