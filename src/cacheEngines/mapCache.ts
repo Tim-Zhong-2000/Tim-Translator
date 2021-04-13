@@ -7,13 +7,10 @@ import { CacheEngine } from "../abstract/cacheEngine";
 import { Payload, MapCacheConfig } from "../type/type";
 
 export class MapCache extends CacheEngine<Map<string, Payload>> {
-  exportable = false;
-
   constructor(config: MapCacheConfig) {
     super();
     this.db = new Map<string, Payload>();
     this.serivceProviderName = config.serviceProviderName || "unknown";
-    this.exportable = config.exportable || false;
   }
 
   fetch(src: string, srcLang: string, destLang: string): Promise<Payload> {
@@ -45,12 +42,5 @@ export class MapCache extends CacheEngine<Map<string, Payload>> {
     if (!result) {
       throw new Error("Insert Fail");
     }
-  }
-
-  export() {
-    if (this.exportable) {
-      return "cache type does not support export";
-    }
-    return "cache disabled";
   }
 }

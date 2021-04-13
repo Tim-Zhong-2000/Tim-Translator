@@ -18,8 +18,6 @@ export abstract class CacheEngine<T> {
 
   abstract insert(dest: Payload): void;
 
-  abstract export(): string;
-
   hash(str: string): string {
     return md5(str);
   }

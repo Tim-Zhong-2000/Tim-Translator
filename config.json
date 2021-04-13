@@ -9,7 +9,6 @@
     },
     "cacheSetting": {
       "serviceProviderName": "baidu translator",
-      "exportable": false,
       "db": {
         "host": "./baidu.db"
       }
@@ -31,7 +30,6 @@
     },
     "cacheSetting": {
       "serviceProviderName": "baidu api translator",
-      "exportable": false,
       "db": {
         "host": "./baiduApi.db"
       }
@@ -51,7 +49,6 @@
     },
     "cacheSetting": {
       "serviceProviderName": "google translator",
-      "exportable": false,
       "db": {
         "host": "./google.db"
       }

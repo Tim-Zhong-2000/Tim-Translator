@@ -8,13 +8,10 @@ import { CacheEngine } from "../abstract/cacheEngine";
 import { Payload, SqliteCacheConfig, TranslateLevel } from "../type/type";
 
 export class SqliteCache extends CacheEngine<sqlite3.Database> {
-  exportable = false;
-
   constructor(config: SqliteCacheConfig) {
     super();
     this.db = new sqlite3.Database(config.db.host || ":memory:");
     this.serivceProviderName = config.serviceProviderName || "unknown";
-    this.exportable = config.exportable || false;
     this.db.run(
       "CREATE TABLE IF NOT EXISTS cache (\
             hash        TEXT      NOT NULL,\
@@ -119,12 +116,5 @@ export class SqliteCache extends CacheEngine<sqlite3.Database> {
       }
     }
     throw new Error("optimizer failed");
-  }
-
-  export() {
-    if (this.exportable) {
-      return "cache type does not support export";
-    }
-    return "cache disabled";
   }
 }
