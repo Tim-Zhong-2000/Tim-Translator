@@ -72,10 +72,25 @@ export interface FilterResult {
   text: string;
 }
 
-export enum FilterType{
+export namespace USER {
+  export interface User {
+    username: string;
+    password: string;
+    role: Role;
+    RegistTime: Date;
+  }
+
+  export enum Role {
+    "admin",
+    "user",
+    "guest",
+  }
+}
+
+export enum FilterType {
   "PROXY",
   "PASS",
-  "BLOCK"
+  "BLOCK",
 }
 
 export enum TranslateLevel {
