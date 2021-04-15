@@ -6,7 +6,6 @@
 import { CacheEngine } from "../abstract/cacheEngine";
 import { TranslateEngine } from "../abstract/translateEngine";
 import { TranslateManager } from "../abstract/translateManager";
-import { MapCache } from "../cacheEngines/mapCache";
 import { DefaultFilter } from "../filter/filter";
 import { FilterType, Payload, TranslateLevel } from "../type/type";
 import { generatePayload } from "../utils/generatePayload";
@@ -52,6 +51,7 @@ export class DefaultTranslatorManager<
         );
         return payload;
       case FilterType.BLOCK:
+        console.log(`BAN:\t${src}`);
         payload = generatePayload(
           true,
           TranslateLevel.AI,
@@ -91,9 +91,14 @@ export class DefaultTranslatorManager<
     this.cacheEngine.insert(dest);
   }
 
-  async readCache(src: string, srcLang: string, destLang: string): Promise<Payload> {
-    return this.cacheEngine
-      .fetch(src, srcLang, destLang)
-      .catch((err) => undefined); // hide miss error
+  async readCache(
+    src: string,
+    srcLang: string,
+    destLang: string
+  ): Promise<Payload> {
+    return this.cacheEngine.fetch(src, srcLang, destLang).catch((err) => {
+      console.error(err);
+      return undefined;
+    });
   }
 }

@@ -9,7 +9,6 @@
     },
     "cacheSetting": {
       "serviceProviderName": "baidu translator",
-      "exportable": false,
       "db": {
         "host": "./baidu.db"
       }
@@ -18,7 +17,7 @@
       "banPrefixs": ["Textractor:", "vnreng:", "抓取服务器"],
       "banWords": [],
       "apis": ["不可用"],
-      "regs": ["不可用"],
+      "regs": ["ban_test"],
       "removeSpaceLangs": ["jp", "zh"]
     }
   },
@@ -31,7 +30,6 @@
     },
     "cacheSetting": {
       "serviceProviderName": "baidu api translator",
-      "exportable": false,
       "db": {
         "host": "./baiduApi.db"
       }
@@ -40,7 +38,7 @@
       "banPrefixs": ["Textractor:", "vnreng:", "抓取服务器"],
       "banWords": [],
       "apis": ["不可用"],
-      "regs": ["不可用"],
+      "regs": ["ban_test"],
       "removeSpaceLangs": ["jp", "zh"]
     }
   },
@@ -51,7 +49,6 @@
     },
     "cacheSetting": {
       "serviceProviderName": "google translator",
-      "exportable": false,
       "db": {
         "host": "./google.db"
       }
@@ -60,7 +57,7 @@
       "banPrefixs": ["Textractor:", "vnreng:", "抓取服务器"],
       "banWords": [],
       "apis": ["不可用"],
-      "regs": ["不可用"],
+      "regs": ["ban_test"],
       "removeSpaceLangs": ["jp", "zh"]
     }
   },
@@ -68,7 +65,7 @@
     "listen": "0.0.0.0",
     "port": 3000,
     "translator": true,
-    "textractor": true,
+    "textractor": false,
     "ocr": false
   }
 }

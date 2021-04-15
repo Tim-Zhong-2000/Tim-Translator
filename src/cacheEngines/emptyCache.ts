@@ -18,8 +18,4 @@ export class EmptyCache extends CacheEngine<null> {
   insert(dest: Payload): void {
     return;
   }
-
-  export() {
-    return "cache disabled";
-  }
 }

@@ -26,7 +26,7 @@ export interface CacheIdentity {
   src: string;
   srcLang: string;
   destLang: string;
-  serviceProvider: string;
+  provider: string;
 }
 
 export interface Database {
@@ -39,7 +39,6 @@ export interface Database {
 
 export interface CacheBase {
   serviceProviderName: string; // 翻译服务提供商名称
-  exportable: boolean;
   db?: Database;
 }
 
