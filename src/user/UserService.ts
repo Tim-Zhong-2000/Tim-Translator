@@ -52,6 +52,25 @@ export class UserService {
     return userinfo;
   }
 
+  /**
+   * 查找用户是否存在
+   * @param text
+   */
+  async findByEmail(email: string) {
+    const findEmail = await this.findUser(email, "email");
+    return findEmail;
+  }
+
+  async findByPhone(phone: string) {
+    const findPhone = await this.findUser(phone, "phone");
+    return findPhone;
+  }
+
+  async findByUid(uid: number) {
+    const findUid = await this.findUser(uid, "uid");
+    return findUid;
+  }
+
   private async selectUser(
     username: string,
     password: string
@@ -78,25 +97,25 @@ export class UserService {
     });
   }
 
-  private async selectUserByUid(uid: number): Promise<USER.UserDbItem> {
+  private async findUser(
+    username: string | number,
+    type: "email" | "phone" | "uid"
+  ) {
     return new Promise((resolve, reject) => {
-      let result: USER.UserDbItem;
-      const stmt = this.db.prepare("SELECT * FROM user WHERE uid=(?)");
-      stmt.run(uid);
-      stmt.each((err, row: USER.UserDbItem) => {
+      let result: USER.UserDbItem = null;
+      const stmt = this.db.prepare(
+        `SELECT * FROM user WHERE ${type}=(?) LIMIT 1`
+      );
+      stmt.run(username);
+      stmt.each((err, row) => {
         if (err) reject(err);
-        if (row.isDelete) return;
         result = row;
       });
       stmt.finalize((err) => {
         if (err) reject(err);
-        if (result) resolve(result);
+        resolve(result);
       });
     });
-  }
-
-  private async toUid(text: string, type: "email" | "phone") {
-    return 1;
   }
 
   private async insertUser(
@@ -106,14 +125,14 @@ export class UserService {
     phone?: string
   ) {
     return new Promise((resolve, reject) => {
-      const stmt = this.db.prepare("INSERT INTO user (?,?,?,?,?,?,?,?)");
+      const stmt = this.db.prepare("INSERT INTO user VALUES (?,?,?,?,?,?,?,?)");
       stmt.run(
         null,
         email,
         phone,
         nickname,
         password,
-        JSON.stringify([USER.Role.guest]),
+        USER.Role.guest,
         Date.now(),
         false
       );
