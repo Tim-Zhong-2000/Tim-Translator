@@ -1,3 +1,8 @@
+/**
+ * @description 路由-登出
+ * @author Tim-Zhong-2000
+ */
+
 import express from "express";
 import { errBody } from "../utils/errorPayload";
 

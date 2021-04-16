@@ -1,3 +1,8 @@
+/**
+ * @description 路由-注册
+ * @author Tim-Zhong-2000
+ */
+
 import express, { Request, Response } from "express";
 import { USER } from "../type/type";
 import { errBody } from "../utils/errorPayload";

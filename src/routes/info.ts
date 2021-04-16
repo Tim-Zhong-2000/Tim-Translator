@@ -1,5 +1,5 @@
 /**
- * @description 路由-info页
+ * @description 路由-info
  * @author Tim-Zhong-2000
  */
 
