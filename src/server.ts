@@ -55,7 +55,7 @@ app.use(
   session({
     secret: "a1@a1@",
     name: "tim-translator",
-    cookie: { maxAge: 10 * 1000 },
+    cookie: { maxAge: 30 * 60 * 1000 },
     resave: false,
     saveUninitialized: true,
   })
