@@ -1,24 +1,22 @@
 /**
- * @description 路由-info页
+ * @description 路由-info
  * @author Tim-Zhong-2000
  */
 
 import express from "express";
-import CONFIG from "../utils/config"
+import CONFIG from "../utils/config";
 
 const router = express.Router();
 
 const entryList: { name: string; value: string }[] = [];
 
 router.get("/entrys", (_req, res) => {
-  res.send(JSON.stringify(entryList));
-  res.end();
+  res.json(entryList);
 });
 
 router.get("/", (_req, res) => {
-    const info = CONFIG.serverConfig;
-    res.send(JSON.stringify(info));
-    res.end();
-  });
+  const info = CONFIG.serverConfig;
+  res.json(info);
+});
 
 export default router;

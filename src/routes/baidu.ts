@@ -4,13 +4,14 @@
  */
 
 import express from "express";
-import CONFIG from "../utils/config"
+import CONFIG from "../utils/config";
 
-import { BaiduTranslatorCrawler } from "../translateEngines/baiduTranslatorCrawler";
-import { DefaultTranslatorManager } from "../translateManager/DefaultTranslatorManager";
-import { baiduLangList } from "../langlist";
-import { DefaultFilter } from "../filter/filter";
-import { SqliteCache } from "../cacheEngines/sqlite3Cache";
+import { BaiduTranslatorCrawler } from "../translator/translateEngines/baiduTranslatorCrawler";
+import { DefaultTranslatorManager } from "../translator/translateManager/DefaultTranslatorManager";
+import { baiduLangList } from "../translator/langlist";
+import { DefaultFilter } from "../translator/filter/filter";
+import { SqliteCache } from "../translator/cacheEngines/sqlite3Cache";
+import { errBody } from "../utils/errorPayload";
 
 const router = express.Router();
 
@@ -29,22 +30,22 @@ if (CONFIG["baidu"].enabled) {
   );
 
   router.get("/langlist", (_req, res) => {
-    res.send(JSON.stringify(baiduLangList));
-    res.end();
+    res.json(baiduLangList);
   });
 
   router.get("/reload", async (_req, res) => {
     await baiduTranslatorCrawler.autoConfig();
-    res.send("Finished");
-    res.end();
+    res.status(201).send("Finished");
   });
 
   router.get("/:srcLang/:destLang/:src", async (req, res) => {
-    let src, srcLang, destLang;
-    ({ src: src, srcLang: srcLang, destLang: destLang } = req.params);
+    const { src, srcLang, destLang } = req.params;
     const dest = await baiduCrawlerManager.translate(src, srcLang, destLang);
-    res.send(JSON.stringify(dest));
-    res.end();
+    res.json(dest);
+  });
+} else {
+  router.use((_req, res) => {
+    res.status(400).json(errBody(400, "百度翻译服务未启用"));
   });
 }
 
