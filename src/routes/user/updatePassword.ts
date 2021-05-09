@@ -28,12 +28,11 @@ router
   .post("/myself", async (req: Request, res: Response) => {
     const uid = req.session.user.uid;
     const { newPassword } = req.body;
-    const result = await req.userService.update(uid, newPassword, "password");
-    if (!result) {
-      res.status(500).json(errBody(500, "修改密码失败"));
-      return;
+    try {
+      res.json(await req.userService.update(uid, newPassword, "password"));
+    } catch (err) {
+      res.status(500).json(errBody(500, "修改密码失败", err.message));
     }
-    res.json(result);
   });
 
 // 管理员修改密码
@@ -44,12 +43,11 @@ router
   .post("/other/:uid", async (req: Request, res: Response) => {
     const uid = Number(req.params.uid);
     const { newPassword } = req.body;
-    const result = await req.userService.update(uid, newPassword, "password");
-    if (!result) {
+    try {
+      res.json(await req.userService.update(uid, newPassword, "password"));
+    } catch (err) {
       res.status(500).json(errBody(500, "修改密码失败"));
-      return;
     }
-    res.json(result);
   });
 
 export default router;

@@ -4,31 +4,11 @@
  */
 
 import express, { NextFunction, Request, Response } from "express";
+import { checkPayload } from "../../utils/checkPayload";
 import { errBody } from "../../utils/errorPayload";
 import { checkLogin } from "../../utils/userSession";
 
 const router = express.Router();
-
-function checkPayload() {
-  return function (req: Request, res: Response, next: NextFunction) {
-    const payloadTemplate = {
-      nickname: "",
-      email: "",
-      password: "",
-    };
-    let flag = true;
-    Object.keys(payloadTemplate).forEach((key) => {
-      if (!(req.body as Object).hasOwnProperty(key)) {
-        flag = false;
-      }
-    });
-    if (flag) {
-      next();
-    } else {
-      res.status(400).json(errBody(400, "请求参数非法"));
-    }
-  };
-}
 
 function checkInfo() {
   return function (req: Request, res: Response, next: NextFunction) {
@@ -43,18 +23,26 @@ function checkInfo() {
     }
   };
 }
+
 router
   .use(checkLogin())
-  .use(checkPayload())
+  .use(
+    checkPayload({
+      nickname: "",
+      email: "",
+      password: "",
+    })
+  )
   .use(checkInfo())
   .post("/", async (req: Request, res: Response) => {
     const { uid } = req.session.user;
-    const result = await req.userService.delete(uid);
-    if (!result) {
-      res.status(500).json(errBody(500, "服务器错误，删除用户失败"));
-      return;
+    try {
+      res.json(await req.userService.delete(uid));
+    } catch (err) {
+      res
+        .status(500)
+        .json(errBody(500, "服务器错误，删除用户失败", err.message));
     }
-    res.json(result);
   });
 
 export default router;

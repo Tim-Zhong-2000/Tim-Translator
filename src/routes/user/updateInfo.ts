@@ -17,31 +17,32 @@ async function updateInfo(
   res: Response
 ) {
   const { nickname, email, phone } = newInfo;
-
   if (email) {
-    const result = await req.userService.update(uid, email, "email");
-    if (!result) {
-      res.status(500).json(errBody(500, "修改邮箱失败"));
+    try {
+      await req.userService.update(uid, email, "email");
+      req.session.user.email = email;
+    } catch (err) {
+      res.status(500).json(errBody(500, "修改邮箱失败", err.message));
       return;
     }
-    req.session.user.email = email;
   }
   if (nickname) {
-    const result = await req.userService.update(uid, nickname, "nickname");
-    if (!result) {
-      res.status(500).json(errBody(500, "修改昵称失败"));
+    try {
+      await req.userService.update(uid, nickname, "nickname");
+      req.session.user.nickname = nickname;
+    } catch (err) {
+      res.status(500).json(errBody(500, "修改昵称失败", err.message));
       return;
     }
-    req.session.user.nickname = nickname;
   }
-
   if (phone) {
-    const result = await req.userService.update(uid, phone, "phone");
-    if (!result) {
-      res.status(500).json(errBody(500, "修改手机号失败"));
+    try {
+      await req.userService.update(uid, phone, "phone");
+      req.session.user.phone = phone;
+    } catch (err) {
+      res.status(500).json(errBody(500, "修改手机号失败", err.message));
       return;
     }
-    req.session.user.phone = phone;
   }
   res.json(newInfo);
 }

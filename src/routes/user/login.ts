@@ -3,7 +3,7 @@
  * @author Tim-Zhong-2000
  */
 
-import express, { NextFunction, Request, Response } from "express";
+import express, { Request, Response } from "express";
 import { USER } from "../../type/type";
 import { errBody } from "../../utils/errorPayload";
 import { checkLogin } from "../../utils/userSession";
@@ -15,14 +15,11 @@ router.get("/", checkLogin()).get("/", (req: Request, res: Response) => {
 });
 
 router.post("/", async (req: Request, res: Response) => {
-  const userinfo = await req.userService
-    .login(req.body as USER.LoginPayload)
-    .catch(() => {
-      console.log("login fail");
-      return null;
-    });
-  if (!userinfo) {
-    res.status(403).json(errBody(403, "登录失败"));
+  let userinfo: USER.UserDbItem;
+  try {
+    userinfo = await req.userService.login(req.body as USER.LoginPayload);
+  } catch (err) {
+    res.status(403).json(errBody(403, "登录失败", err.message));
     req.session.destroy(() => {});
     return;
   }
