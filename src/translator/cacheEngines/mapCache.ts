@@ -24,7 +24,7 @@ export class MapCache extends CacheEngine<Map<string, Payload>> {
       const result = this.db.get(reqHash);
       if (!result) {
         console.log(`MISS:\t${decodeURI(src)}\thash:\t${reqHash}`);
-        throw new Error("MISS");
+        reject("MISS");
       }
       console.log(`HIT:\t${decodeURI(src)}\thash:\t${reqHash}`);
       resolve(result);
