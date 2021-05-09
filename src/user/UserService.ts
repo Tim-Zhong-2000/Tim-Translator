@@ -2,6 +2,22 @@ import { Database, USER } from "../type/type";
 import sqlite3 = require("sqlite3");
 import md5 from "md5";
 
+function errorHandler(err: USER.DBError) {
+  if (typeof err !== "number") return new Error("未知错误");
+  switch (err) {
+    case USER.DBError.AUTH_FAIL:
+      return new Error("用户不存在或密码错误");
+    case USER.DBError.NOT_EXIST:
+      return new Error("用户不存在");
+    case USER.DBError.COUNT_TOOMUCH:
+      return new Error("数据库异常，用户重复");
+    case USER.DBError.INTERNAL_ERROR:
+      return new Error("数据库内部错误");
+    default:
+      return new Error("未知数据库错误");
+  }
+}
+
 export class UserService {
   db: sqlite3.Database;
   constructor(dbConfig: Database) {
@@ -15,7 +31,7 @@ export class UserService {
         password    TEXT                  NOT NULL,\
         role        INTEGER               NOT NULL,\
         create_at   TEXT                  NOT NULL,\
-        isDelete    BOOLEAN               NOT NULL\
+        active      BOOLEAN               NOT NULL\
       )"
     );
   }
@@ -27,15 +43,11 @@ export class UserService {
    * @returns hash
    */
   async login(user: USER.LoginPayload): Promise<USER.UserDbItem> {
-    const userLine: USER.UserDbItem = await this.selectUser(
-      user.username,
-      md5(user.password),
-      "email"
-    );
-    if (!userLine) {
-      throw new Error("invaild login");
+    try {
+      return await this.authUser(user.username, md5(user.password), "email");
+    } catch (err) {
+      throw errorHandler(err);
     }
-    return userLine;
   }
 
   /**
@@ -45,31 +57,38 @@ export class UserService {
    */
   async register(user: USER.RegisterPayload) {
     const { email, phone, password, nickname } = user;
-    const sataus = await this.insertUser(email, phone, md5(password), nickname);
-    if (!sataus) throw new Error("register failed");
-
-    const userinfo = await this.selectUser(email, md5(password), "email");
-    if (!userinfo) throw new Error("select user failed! Internal Error!");
-
-    return userinfo;
+    try {
+      await this.insertUser(email, phone, md5(password), nickname);
+      return await this.authUser(email, md5(password), "email");
+    } catch (err) {
+      throw errorHandler(err);
+    }
   }
 
   /**
    * 用Email查找用户是否存在
    * @param email Email
+   * @returns 用户是否存在
    */
   async findByEmail(email: string) {
-    const findEmail = await this.findUser(email, "email");
-    return findEmail;
+    try {
+      return await this.findActiveUser(email, "email");
+    } catch (err) {
+      throw errorHandler(err);
+    }
   }
 
   /**
    * 用Phone查找用户是否存在
    * @param phone Phone
+   * @returns uid
    */
   async findByPhone(phone: string) {
-    const findPhone = await this.findUser(phone, "phone");
-    return findPhone;
+    try {
+      return await this.findActiveUser(phone, "phone");
+    } catch (err) {
+      throw errorHandler(err);
+    }
   }
 
   /**
@@ -77,8 +96,11 @@ export class UserService {
    * @param uid uid
    */
   async findByUid(uid: number) {
-    const findUid = await this.findUser(uid, "uid");
-    return findUid;
+    try {
+      return await this.findActiveUser(uid, "uid");
+    } catch (err) {
+      throw errorHandler(err);
+    }
   }
 
   /**
@@ -87,9 +109,12 @@ export class UserService {
    * @returns uid
    */
   async delete(uid: number) {
-    const result = await this.deleteUser(uid);
-    if (!result) throw new Error("delete user error");
-    return { now: Date.now(), uid: uid };
+    try {
+      await this.deleteUser(uid);
+      return { now: Date.now(), uid: uid };
+    } catch (err) {
+      throw errorHandler(err);
+    }
   }
 
   /**
@@ -104,12 +129,15 @@ export class UserService {
     text: string | number,
     type: "email" | "phone" | "nickname" | "password" | "role"
   ) {
-    const result = await this.updateUser(uid, text, type);
-    if (!result) throw new Error("update user error");
-    return { now: Date.now(), uid: uid };
+    try {
+      await this.updateUser(uid, text, type);
+      return { now: Date.now(), uid: uid };
+    } catch (err) {
+      throw errorHandler(err);
+    }
   }
 
-  private async selectUser(
+  private async authUser(
     username: string,
     password: string,
     type: "uid" | "email" | "phone"
@@ -117,42 +145,62 @@ export class UserService {
     return new Promise((resolve, reject) => {
       let result: USER.UserDbItem = null;
       const stmt = this.db.prepare(
-        `SELECT * FROM user WHERE ${type}=(?) AND password=(?) AND isDelete=false`
+        `SELECT * FROM user WHERE ${type}=(?) AND password=(?) AND active=true`
       );
       stmt.run(username, password);
-      stmt.each((err, row: USER.UserDbItem) => {
-        if (err) reject(err);
-        if (row.isDelete) return;
-        result = row;
-      });
-      stmt.finalize((err) => {
-        if (err) reject(err);
-        resolve(result);
-      });
-      setTimeout(() => {
-        reject("timeout");
-      }, 2000);
+      stmt.each(
+        (_err, row: USER.UserDbItem) => {
+          delete row.password;
+          result = row;
+        },
+        (err, count) => {
+          if (err) reject(USER.DBError.INTERNAL_ERROR);
+          else if (count === 0) reject(USER.DBError.AUTH_FAIL);
+          else if (count === 1) resolve(result);
+          else reject(USER.DBError.COUNT_TOOMUCH);
+        }
+      );
+      stmt.finalize();
     });
   }
 
-  private async findUser(
-    username: string | number,
+  private findActiveUser(
+    text: string | number,
     type: "uid" | "email" | "phone"
   ) {
-    return new Promise((resolve, reject) => {
+    return this.findUserBase(text, type, true);
+  }
+
+  private findInactiveUser(
+    text: string | number,
+    type: "uid" | "email" | "phone"
+  ) {
+    return this.findUserBase(text, type, false);
+  }
+
+  private findUserBase(
+    text: string | number,
+    type: "uid" | "email" | "phone",
+    active: boolean
+  ) {
+    return new Promise<USER.UserDbItem>((resolve, reject) => {
       let result: USER.UserDbItem = null;
       const stmt = this.db.prepare(
-        `SELECT * FROM user WHERE ${type}=(?) AND isDelete=false LIMIT 1`
+        `SELECT * FROM user WHERE ${type}=(?) AND active=(?) LIMIT 1`
       );
-      stmt.run(username);
-      stmt.each((err, row) => {
-        if (err) reject(err);
-        result = row;
-      });
-      stmt.finalize((err) => {
-        if (err) reject(err);
-        resolve(result);
-      });
+      stmt.run(text, active);
+      stmt.each(
+        (_err, row: USER.UserDbItem) => {
+          delete row.password;
+          result = row;
+        },
+        (err, count) => {
+          if (err) reject(USER.DBError.INTERNAL_ERROR);
+          else if (count === 0) reject(USER.DBError.NOT_EXIST);
+          else resolve(result);
+        }
+      );
+      stmt.finalize();
     });
   }
 
@@ -175,21 +223,19 @@ export class UserService {
         false
       );
       stmt.finalize((err) => {
-        if (err) throw new Error("insert user failed");
-        resolve(true);
+        if (err) reject(USER.DBError.INTERNAL_ERROR);
+        else resolve(true);
       });
     });
   }
 
   private async deleteUser(uid: number) {
     return new Promise((resolve, reject) => {
-      const stmt = this.db.prepare(
-        "UPDATE user SET isDelete=(?) WHERE uid=(?)"
-      );
+      const stmt = this.db.prepare("UPDATE user SET active=(?) WHERE uid=(?)");
       stmt.run(true, uid);
       stmt.finalize((err) => {
-        if (err) reject(err);
-        resolve(true);
+        if (err) reject(USER.DBError.INTERNAL_ERROR);
+        else resolve(true);
       });
     });
   }
@@ -203,8 +249,8 @@ export class UserService {
       const stmt = this.db.prepare(`UPDATE user SET ${type}=(?) WHERE uid=(?)`);
       stmt.run(text, uid);
       stmt.finalize((err) => {
-        if (err) reject(err);
-        resolve(true);
+        if (err) reject(USER.DBError.INTERNAL_ERROR);
+        else resolve(true);
       });
     });
   }

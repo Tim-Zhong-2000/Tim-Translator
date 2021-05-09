@@ -116,6 +116,13 @@ export namespace USER {
     "translator", // + 验证权限
     "admin", // + 最高权限
   }
+
+  export enum DBError {
+    "NOT_EXIST",
+    "AUTH_FAIL",
+    "COUNT_TOOMUCH",
+    "INTERNAL_ERROR",
+  }
 }
 
 export enum FilterType {

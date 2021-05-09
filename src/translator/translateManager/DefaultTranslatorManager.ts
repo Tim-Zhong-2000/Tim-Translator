@@ -33,15 +33,13 @@ export class DefaultTranslatorManager<
     srcLang: string,
     destLang: string
   ): Promise<Payload> {
-    let payload: Payload = null;
-
     const filterResult = this.filter.exec(src, srcLang);
     switch (filterResult.type) {
       case FilterType.PASS:
         src = filterResult.text;
         break;
       case FilterType.PROXY:
-        payload = generatePayload(
+        return generatePayload(
           true,
           TranslateLevel.VERIFIED,
           src,
@@ -49,10 +47,9 @@ export class DefaultTranslatorManager<
           srcLang,
           destLang
         );
-        return payload;
       case FilterType.BLOCK:
         console.log(`BAN:\t${src}`);
-        payload = generatePayload(
+        return generatePayload(
           true,
           TranslateLevel.AI,
           "",
@@ -60,31 +57,36 @@ export class DefaultTranslatorManager<
           srcLang,
           destLang
         );
-        return payload;
     }
 
-    console.time("readCache");
-    payload = await this.readCache(src, srcLang, destLang).catch();
-    console.timeEnd("readCache");
+    try {
+      console.time("readCache");
+      const payload = await this.readCache(src, srcLang, destLang);
+      payload.success = true;
+      return payload;
+    } catch (err) {
+      console.log(err)
+    } finally {
+      console.timeEnd("readCache");
+    }
 
-    if (!payload) {
+    try {
       console.time("translate");
-      payload = await this.translateEngine
-        .translate(src, srcLang, destLang)
-        .catch((err) => {
-          return generatePayload(
-            false,
-            TranslateLevel.AI,
-            src,
-            "服务器未知错误",
-            srcLang,
-            destLang
-          );
-        });
+      const payload = await this.translateEngine.translate(src, srcLang, destLang);
+      this.writeCache(payload);
+      return payload;
+    } catch (err) {
+      return generatePayload(
+        false,
+        TranslateLevel.AI,
+        src,
+        err.message,
+        srcLang,
+        destLang
+      );
+    } finally {
       console.timeEnd("translate");
-      if (payload.success) this.writeCache(payload);
     }
-    return payload;
   }
 
   writeCache(dest: Payload): void {
@@ -96,9 +98,6 @@ export class DefaultTranslatorManager<
     srcLang: string,
     destLang: string
   ): Promise<Payload> {
-    return this.cacheEngine.fetch(src, srcLang, destLang).catch((err) => {
-      console.error(err);
-      return undefined;
-    });
+    return this.cacheEngine.fetch(src, srcLang, destLang);
   }
 }
