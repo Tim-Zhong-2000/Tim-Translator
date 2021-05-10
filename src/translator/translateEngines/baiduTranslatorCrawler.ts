@@ -10,8 +10,8 @@ import {
   BaiduTranslatorConfig,
   BaiduPayload,
   TranslateLevel,
-} from "../../type/Translator";
-import { generatePayload } from "../../utils/generatePayload";
+} from "@type/Translator";
+import { generatePayload } from "@utils/generatePayload";
 
 export class BaiduTranslatorCrawler extends TranslateEngine {
   configReady = false;

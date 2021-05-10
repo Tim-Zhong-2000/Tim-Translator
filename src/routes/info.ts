@@ -4,7 +4,7 @@
  */
 
 import express from "express";
-import CONFIG from "../utils/config";
+import CONFIG from "@utils/config";
 
 const router = express.Router();
 

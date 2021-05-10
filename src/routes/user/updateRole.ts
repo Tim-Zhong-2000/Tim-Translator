@@ -3,11 +3,11 @@
  * @author Tim-Zhong-2000
  */
 
-import express, { NextFunction, Request, Response } from "express";
-import { USER } from "../../type/User";
-import { checkPayload } from "../../utils/checkPayload";
-import { errBody } from "../../utils/errorPayload";
-import { checkLogin, roleControl } from "../../utils/userSession";
+import express, { Request, Response } from "express";
+import { USER } from "@type/User";
+import { checkPayload } from "@utils/checkPayload";
+import { errBody } from "@utils/errorPayload";
+import { checkLogin, roleControl } from "@utils/userSession";
 
 const router = express.Router();
 

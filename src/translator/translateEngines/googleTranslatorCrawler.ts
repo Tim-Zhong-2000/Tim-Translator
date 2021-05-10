@@ -5,8 +5,8 @@
 
 import axios from "axios";
 import { TranslateEngine } from "../abstract/translateEngine";
-import { Payload, TranslateLevel } from "../../type/Translator";
-import { generatePayload } from "../../utils/generatePayload";
+import { Payload, TranslateLevel } from "@type/Translator";
+import { generatePayload } from "@utils/generatePayload";
 
 export class GoogleTranslatorCrawler extends TranslateEngine {
   UA = "";

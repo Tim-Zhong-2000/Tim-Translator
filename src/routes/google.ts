@@ -4,14 +4,14 @@
  */
 
 import express from "express";
-import CONFIG from "../utils/config";
+import CONFIG from "@utils/config";
 
-import { DefaultTranslatorManager } from "../translator/translateManager/DefaultTranslatorManager";
-import { googleLanglist } from "../translator/langlist";
-import { DefaultFilter } from "../translator/filter/filter";
-import { GoogleTranslatorCrawler } from "../translator/translateEngines/googleTranslatorCrawler";
-import { SqliteCache } from "../translator/cacheEngines/sqlite3Cache";
-import { errBody } from "../utils/errorPayload";
+import { DefaultTranslatorManager } from "@translator/translateManager/DefaultTranslatorManager";
+import { googleLanglist } from "@translator/langlist";
+import { DefaultFilter } from "@translator/filter/filter";
+import { GoogleTranslatorCrawler } from "@translator/translateEngines/googleTranslatorCrawler";
+import { SqliteCache } from "@translator/cacheEngines/sqlite3Cache";
+import { errBody } from "@utils/errorPayload";
 
 const router = express.Router();
 

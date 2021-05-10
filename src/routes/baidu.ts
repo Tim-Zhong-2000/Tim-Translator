@@ -4,14 +4,14 @@
  */
 
 import express from "express";
-import CONFIG from "../utils/config";
+import CONFIG from "@utils/config";
 
-import { BaiduTranslatorCrawler } from "../translator/translateEngines/baiduTranslatorCrawler";
-import { DefaultTranslatorManager } from "../translator/translateManager/DefaultTranslatorManager";
-import { baiduLangList } from "../translator/langlist";
-import { DefaultFilter } from "../translator/filter/filter";
-import { SqliteCache } from "../translator/cacheEngines/sqlite3Cache";
-import { errBody } from "../utils/errorPayload";
+import { BaiduTranslatorCrawler } from "@translator/translateEngines/baiduTranslatorCrawler";
+import { DefaultTranslatorManager } from "@translator/translateManager/DefaultTranslatorManager";
+import { baiduLangList } from "@translator/langlist";
+import { DefaultFilter } from "@translator/filter/filter";
+import { SqliteCache } from "@translator/cacheEngines/sqlite3Cache";
+import { errBody } from "@utils/errorPayload";
 
 const router = express.Router();
 
