@@ -5,7 +5,9 @@
   "main": "src/server.ts",
   "scripts": {
     "build": "tsc",
-    "start": "tsc && node dist/server.js"
+    "start": "tsc && node dist/server.js",
+    "watch": "tsc -w",
+    "dev": "nodemon dist/server.js"
   },
   "author": "",
   "license": "ISC",
@@ -17,6 +19,7 @@
     "express-session": "^1.17.1",
     "md5": "^2.3.0",
     "morgan": "^1.10.0",
+    "nodemon": "^2.0.7",
     "qs": "^6.9.6",
     "sqlite3": "^5.0.2",
     "typescript": "^4.2.3"
