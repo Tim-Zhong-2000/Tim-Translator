@@ -38,7 +38,7 @@ export class UserService {
           nickname: "admin",
           email: "1@123.com",
           password: "123456",
-        });
+        }).catch(() => {});
         this.register({
           nickname: "test2",
           email: "2@123.com",
@@ -49,10 +49,10 @@ export class UserService {
   }
 
   /**
-   * 登录接口
-   * 登录成功返回用户信息，登录失败抛出错误
+   * ## 验证密码(登录)
+   * 失败时抛出Error类型错误
    * @param user 账号密码
-   * @returns hash
+   * @returns Promise<USER.UserDbItem> without password
    */
   async login(user: USER.LoginPayload): Promise<USER.UserDbItem> {
     try {
@@ -63,9 +63,10 @@ export class UserService {
   }
 
   /**
-   * 注册接口
+   * ## 新增用户(注册)
+   * 失败时抛出Error类型错误
    * @param user 注册payload
-   * 返回注册成功的用户信息
+   * @returns Promise<USER.UserDbItem> without password
    */
   async register(user: USER.RegisterPayload) {
     const { email, phone, password, nickname } = user;
@@ -95,9 +96,10 @@ export class UserService {
   }
 
   /**
-   * 用Email查找用户是否存在
-   * @param email Email
-   * @returns 用户是否存在
+   * ## 用Email查找用户是否存在
+   * 失败时抛出Error类型错误
+   * @param email
+   * @returns Promise<USER.UserDbItem> without password
    */
   async findByEmail(email: string) {
     try {
@@ -108,9 +110,10 @@ export class UserService {
   }
 
   /**
-   * 用Phone查找用户是否存在
-   * @param phone Phone
-   * @returns uid
+   * ## 用手机号码查找用户是否存在
+   * 失败时抛出Error类型错误
+   * @param phone
+   * @returns Promise<USER.UserDbItem> without password
    */
   async findByPhone(phone: string) {
     try {
@@ -121,8 +124,9 @@ export class UserService {
   }
 
   /**
-   * 用uid查找用户是否存在
-   * @param uid uid
+   * ## 用uid查找用户是否存在
+   * 失败时抛出Error类型错误
+   * @param uid
    */
   async findByUid(uid: number) {
     try {
@@ -133,9 +137,10 @@ export class UserService {
   }
 
   /**
-   * 删除账户
+   * ## 删除账户
+   * 失败时抛出Error类型错误
    * @param uid
-   * @returns uid
+   * @returns 操作时间和操作uid
    */
   async delete(uid: number) {
     try {
@@ -147,10 +152,11 @@ export class UserService {
   }
 
   /**
-   * 更新账号内容
+   * ## 更新账号内容
+   * 失败时抛出Error类型错误
    * @param uid 用户uid
    * @param text 修改内容
-   * @param type "email" | "phone" | "nickname" | "password"
+   * @param type 修改类型 "email" | "phone" | "nickname" | "password"
    * @returns
    */
   async update(
@@ -166,8 +172,16 @@ export class UserService {
     }
   }
 
+  /**
+   * ## 验证用户密码
+   * 失败时抛出USER.DBError类型错误
+   * @param text 搜索文本 uid: number | email: string | phone: string 
+   * @param password 哈希后的密码
+   * @param type "uid" | "email" | "phone" 
+   * @returns Promise<USER.UserDbItem> without password
+   */
   private async authUser(
-    username: string,
+    text: string|number,
     password: string,
     type: "uid" | "email" | "phone"
   ): Promise<USER.UserDbItem> {
@@ -176,7 +190,7 @@ export class UserService {
       const stmt = this.db.prepare(
         `SELECT * FROM user WHERE ${type}=(?) AND password=(?) AND active=true`
       );
-      stmt.run(username, password);
+      stmt.run(text, password);
       stmt.each(
         (_err, row: USER.UserDbItem) => {
           delete row.password;
@@ -193,20 +207,39 @@ export class UserService {
     });
   }
 
-  private findActiveUser(
+  /**
+   * ## 查找已启用用户
+   * @param text 搜索文本 uid: number | email: string | phone: string
+   * @param type 文本类型 "uid" | "email" | "phone"
+   * @returns Promise<USER.UserDbItem> without password
+   */
+  findActiveUser(
     text: string | number,
     type: "uid" | "email" | "phone"
   ) {
     return this.findUserBase(text, type, true);
   }
 
-  private findInactiveUser(
+  /**
+   * ## 查找已禁用用户
+   * @param text 搜索文本 uid: number | email: string | phone: string
+   * @param type 文本类型 "uid" | "email" | "phone"
+   * @returns Promise<USER.UserDbItem> without password
+   */
+  findInactiveUser(
     text: string | number,
     type: "uid" | "email" | "phone"
   ) {
     return this.findUserBase(text, type, false);
   }
 
+  /**
+   * 查找用户的基础函数
+   * @param text 搜索文本 uid: number | email: string | phone: string
+   * @param type 文本类型 "uid" | "email" | "phone"
+   * @param active 账户是否启用
+   * @returns Promise<USER.UserDbItem> without password
+   */
   private findUserBase(
     text: string | number,
     type: "uid" | "email" | "phone",
@@ -233,13 +266,22 @@ export class UserService {
     });
   }
 
+  /**
+   * ## 新增用户
+   * 失败时抛出USER.DBError类型错误
+   * @param email 
+   * @param nickname 
+   * @param password 
+   * @param phone 
+   * @returns Promise<boolean>
+   */
   private async insertUser(
     email: string,
     nickname: string,
     password: string,
     phone?: string
   ) {
-    return new Promise((resolve, reject) => {
+    return new Promise<boolean>((resolve, reject) => {
       const stmt = this.db.prepare("INSERT INTO user VALUES (?,?,?,?,?,?,?,?)");
       stmt.run(
         null,
@@ -258,8 +300,14 @@ export class UserService {
     });
   }
 
+  /**
+   * ## 删除用户
+   * 失败时抛出USER.DBError类型错误
+   * @param uid 
+   * @returns Promise<boolean>
+   */
   private async deleteUser(uid: number) {
-    return new Promise((resolve, reject) => {
+    return new Promise<boolean>((resolve, reject) => {
       const stmt = this.db.prepare("UPDATE user SET active=(?) WHERE uid=(?)");
       stmt.run(true, uid);
       stmt.finalize((err) => {
@@ -269,12 +317,20 @@ export class UserService {
     });
   }
 
+  /**
+   * ## 更新用户信息
+   * 失败时抛出USER.DBError类型错误
+   * @param uid 
+   * @param text 搜索文本 uid: number | email: string | phone: string
+   * @param type 文本类型 "uid" | "email" | "phone"
+   * @returns Promise<boolean>
+   */
   private async updateUser(
     uid: number,
     text: string | number,
     type: "email" | "phone" | "nickname" | "password" | "role"
   ) {
-    return new Promise((resolve, reject) => {
+    return new Promise<boolean>((resolve, reject) => {
       const stmt = this.db.prepare(`UPDATE user SET ${type}=(?) WHERE uid=(?)`);
       stmt.run(text, uid);
       stmt.finalize((err) => {
