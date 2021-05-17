@@ -5,13 +5,7 @@
     "noImplicitAny": true,
     "outDir": "./dist",
     "sourceMap": true,
-    "esModuleInterop": true,
-    "baseUrl": ".",
-    "paths": {
-      "@*":[
-        "src/*"
-      ]
-    }
+    "esModuleInterop": true
   },
   "include": ["src/**/*"]
 }

@@ -4,9 +4,9 @@
  */
 
 import express, { NextFunction, Request, Response } from "express";
-import { checkPayload } from "@utils/checkPayload";
-import { errBody } from "@utils/errorPayload";
-import { checkLogin } from "@utils/userSession";
+import { checkPayload } from "../../utils/checkPayload";
+import { errBody } from "../../utils/errorPayload";
+import { checkLogin } from "../../utils/userSession";
 
 const router = express.Router();
 

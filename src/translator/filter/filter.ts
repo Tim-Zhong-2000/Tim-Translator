@@ -3,7 +3,7 @@
  * @author Tim-Zhong-2000
  */
 
-import { FilterConfig, FilterResult, FilterType } from "@type/Translator";
+import { FilterConfig, FilterResult, FilterType } from "../../type/Translator";
 
 export class DefaultFilter {
   config: FilterConfig;
