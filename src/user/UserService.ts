@@ -400,6 +400,7 @@ export class UserService {
    * @param friend 添加的好友id
    */
   async addFriend(uid: number, friend: number) {
+    await this.findByUid(friend); // 判断用户是否存在
     await this.addToFriendList(uid, friend, "friendreq");
     try {
       await this.addToFriendList(friend, uid, "friendres");
