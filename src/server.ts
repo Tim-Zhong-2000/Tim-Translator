@@ -13,6 +13,7 @@ import info from "./routes/info";
 import baidu from "./routes/baidu";
 import baiduapi from "./routes/baiduapi";
 import google from "./routes/google";
+import team from "./routes/team";
 import serviceDiscovery from "./routes/serviceDiscovery";
 
 import { USER } from "./type/User";
@@ -38,7 +39,7 @@ const app = express();
 app.use(cors());
 
 // logger
-app.use(morgan("combined"));
+// app.use(morgan("combined"));
 
 // post body
 app.use(express.urlencoded({ extended: true }));
@@ -66,6 +67,7 @@ app.use("/info", info);
 app.use("/baidu", baidu);
 app.use("/baiduapi", baiduapi);
 app.use("/google", google);
+app.use("/team", team);
 app.use("/servicediscovery", serviceDiscovery);
 
 // express启动配置

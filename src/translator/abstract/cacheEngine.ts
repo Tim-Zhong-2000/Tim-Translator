@@ -18,11 +18,11 @@ export abstract class CacheEngine<T> {
 
   abstract insert(dest: Payload): void;
 
-  hash(str: string): string {
+  static hash(str: string): string {
     return md5(str);
   }
 
-  generateHashKey(
+  static generateHashKey(
     src: string,
     srcLang: string,
     destLang: string,

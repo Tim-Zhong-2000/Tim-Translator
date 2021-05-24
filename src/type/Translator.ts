@@ -42,6 +42,7 @@ export interface SqliteCacheConfig extends CacheBase {}
 
 export interface Payload {
   success: boolean;
+  provider: string;
   level: TranslateLevel;
   src: string;
   dest: string;

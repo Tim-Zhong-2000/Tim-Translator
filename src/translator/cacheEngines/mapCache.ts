@@ -14,7 +14,7 @@ export class MapCache extends CacheEngine<Map<string, Payload>> {
   }
 
   fetch(src: string, srcLang: string, destLang: string): Promise<Payload> {
-    const reqHash = this.generateHashKey(
+    const reqHash = CacheEngine.generateHashKey(
       src,
       srcLang,
       destLang,
@@ -32,7 +32,7 @@ export class MapCache extends CacheEngine<Map<string, Payload>> {
   }
 
   insert(dest: Payload): void {
-    const reqHash = this.generateHashKey(
+    const reqHash = CacheEngine.generateHashKey(
       dest.src,
       dest.srcLang,
       dest.destLang,

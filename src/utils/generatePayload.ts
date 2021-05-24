@@ -6,11 +6,13 @@ export function generatePayload(
   src: string,
   dest: string,
   srcLang: string,
-  destLang: string
+  destLang: string,
+  provider = "AI"
 ): Payload {
   return {
     success: success,
     level: level,
+    provider: provider,
     src: src,
     dest: dest,
     srcLang: srcLang,

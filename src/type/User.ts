@@ -13,6 +13,9 @@ export namespace USER {
     role: Role;
     create_at: string;
     isDelete: boolean;
+    friends: string; // JSON.stringify(number[])
+    friendreq: string; // JSON.stringify(number[]) 请求队列
+    friendres: string; // JSON.stringify(number[]) 接收好友队列
   }
 
   export interface RegisterPayload {
@@ -28,6 +31,9 @@ export namespace USER {
     email: string;
     phone?: string;
     role: Role;
+    friends: { uid: number; nickname: string }[];
+    friendreq: { uid: number; nickname: string }[];
+    friendres: { uid: number; nickname: string }[];
   }
 
   export interface Info {
@@ -49,6 +55,12 @@ export namespace USER {
     "AUTH_FAIL",
     "COUNT_TOOMUCH",
     "INTERNAL_ERROR",
-    "TYPE_UNSAFE" // 用于初始化sql的变量类型非法
+    "TYPE_UNSAFE", // 用于初始化sql的变量类型非法
+  }
+
+  export enum PrivacyLabel {
+    "public",
+    "friend",
+    "own",
   }
 }

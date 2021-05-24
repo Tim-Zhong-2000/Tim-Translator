@@ -34,6 +34,9 @@ export class UserService {
         password    TEXT                  NOT NULL,\
         role        INTEGER               NOT NULL,\
         create_at   TEXT                  NOT NULL,\
+        friends     TEXT                  NOT NULL,\
+        friendreq   TEXT                  NOT NULL,\
+        friendres   TEXT                  NOT NULL,\
         active      BOOLEAN               NOT NULL\
       )",
       () => {
@@ -41,12 +44,12 @@ export class UserService {
           nickname: "admin",
           email: "1@123.com",
           password: "123456",
-        }).catch(() => { });
+        }).catch(() => {});
         this.register({
           nickname: "test2",
           email: "2@123.com",
           password: "123456",
-        }).catch(() => { });
+        }).catch(() => {});
       }
     );
   }
@@ -229,12 +232,20 @@ export class UserService {
    * @param offset 偏移量
    * @returns 用户列表 USER.UserDbItem[] without password
    */
-  async listUserByUidRange(uidStart: number, uidEnd: number, limit = 100, offset = 0) {
+  async listUserByUidRange(
+    uidStart: number,
+    uidEnd: number,
+    limit = 100,
+    offset = 0
+  ) {
     try {
-      if (typeof (uidStart) === "number" && typeof (uidEnd) === "number") {
-        return await this.listUserBase(limit, offset, `WHERE uid>=${uidStart} AND uid<=${uidEnd}`);
-      }
-      else {
+      if (typeof uidStart === "number" && typeof uidEnd === "number") {
+        return await this.listUserBase(
+          limit,
+          offset,
+          `WHERE uid>=${uidStart} AND uid<=${uidEnd}`
+        );
+      } else {
         throw USER.DBError.TYPE_UNSAFE;
       }
     } catch (err) {
@@ -251,12 +262,20 @@ export class UserService {
    * @param offset 偏移量
    * @returns 用户列表 USER.UserDbItem[] without password
    */
-  async listUserByCreateTimeRange(timeStart: number, timeEnd: number, limit = 100, offset = 0) {
+  async listUserByCreateTimeRange(
+    timeStart: number,
+    timeEnd: number,
+    limit = 100,
+    offset = 0
+  ) {
     try {
-      if (typeof (timeStart) === "number" && typeof (timeEnd) === "number") {
-        return await this.listUserBase(limit, offset, `WHERE uid>=${timeStart} AND uid<=${timeEnd}`);
-      }
-      else {
+      if (typeof timeStart === "number" && typeof timeEnd === "number") {
+        return await this.listUserBase(
+          limit,
+          offset,
+          `WHERE uid>=${timeStart} AND uid<=${timeEnd}`
+        );
+      } else {
         throw USER.DBError.TYPE_UNSAFE;
       }
     } catch (err) {
@@ -270,33 +289,38 @@ export class UserService {
    * @param limit 获取数量
    * @param offset 偏移量
    * @param statments 条件约束(警告：需要防止sql注入)
-   * @returns 
+   * @returns
    */
   private listUserBase(limit: number, offset: number, statments = "") {
     return new Promise<USER.UserDbItem[]>((resolve, reject) => {
-      if (typeof (limit) === "number" && typeof (offset) === "number") {
+      if (typeof limit === "number" && typeof offset === "number") {
         const result: USER.UserDbItem[] = [];
-        const stmt = this.db.prepare(`SELECT * FROM user ${statments} LIMIT ${limit} OFFSET ${offset}`);
+        const stmt = this.db.prepare(
+          `SELECT * FROM user ${statments} LIMIT ${limit} OFFSET ${offset}`
+        );
         stmt.run();
-        stmt.each(((_err, row) => {
-          delete row.password;
-          result.push(row);
-        }), (err, _count) => {
-          if (err) reject(USER.DBError.INTERNAL_ERROR)
-          else resolve(result)
-        })
+        stmt.each(
+          (_err, row) => {
+            delete row.password;
+            result.push(row);
+          },
+          (err, _count) => {
+            if (err) reject(USER.DBError.INTERNAL_ERROR);
+            else resolve(result);
+          }
+        );
       } else {
         reject(USER.DBError.TYPE_UNSAFE);
       }
-    })
+    });
   }
 
   /**
    * ## 验证用户密码
    * 失败时抛出USER.DBError类型错误
-   * @param text 搜索文本 uid: number | email: string | phone: string 
+   * @param text 搜索文本 uid: number | email: string | phone: string
    * @param password 哈希后的密码
-   * @param type "uid" | "email" | "phone" 
+   * @param type "uid" | "email" | "phone"
    * @returns Promise<USER.UserDbItem> without password
    */
   private async authUser(
@@ -332,10 +356,7 @@ export class UserService {
    * @param type 文本类型 "uid" | "email" | "phone"
    * @returns Promise<USER.UserDbItem> without password
    */
-  findActiveUser(
-    text: string | number,
-    type: "uid" | "email" | "phone"
-  ) {
+  findActiveUser(text: string | number, type: "uid" | "email" | "phone") {
     return this.findUserBase(text, type, true);
   }
 
@@ -345,16 +366,121 @@ export class UserService {
    * @param type 文本类型 "uid" | "email" | "phone"
    * @returns Promise<USER.UserDbItem> without password
    */
-  findInactiveUser(
-    text: string | number,
-    type: "uid" | "email" | "phone"
-  ) {
+  findInactiveUser(text: string | number, type: "uid" | "email" | "phone") {
     return this.findUserBase(text, type, false);
+  }
+
+  async getFriendDetail(
+    uid: number,
+    listname: "friends" | "friendreq" | "friendres"
+  ) {
+    const dbItem = await this.findByUid(uid);
+    const list = JSON.parse(dbItem[listname]) as number[];
+    if (list.length === 0) return [];
+    let sql = "SELECT uid,nickname FROM data WHERE"
+      .concat(" uid=? OR".repeat(list.length - 1))
+      .concat("uid=?");
+    return new Promise<{ uid: number; nickname: string }[]>(
+      (resolve, reject) => {
+        this.db.all(
+          sql,
+          list,
+          (_: any, err: Error, rows: { uid: number; nickname: string }[]) => {
+            if (err) reject(err);
+            else resolve(rows);
+          }
+        );
+      }
+    );
+  }
+
+  /**
+   * 发送好友请求
+   * @param uid
+   * @param friend 添加的好友id
+   */
+  async addFriend(uid: number, friend: number) {
+    await this.addToFriendList(uid, friend, "friendreq");
+    try {
+      await this.addToFriendList(friend, uid, "friendres");
+    } catch (err) {
+      await this.removeFromFriendList(uid, friend, "friendreq"); // redo
+    }
+  }
+
+  /**
+   * 双向删除好友
+   * @param uid
+   * @param friend 添加的好友id
+   */
+  async deleteFriend(uid: number, friend: number) {
+    await this.removeFromFriendList(uid, friend, "friends");
+    try {
+      await this.removeFromFriendList(friend, uid, "friends");
+    } catch (err) {
+      await this.addToFriendList(uid, friend, "friends");
+    }
+  }
+
+  /**
+   * 通过好友请求
+   * @param uid
+   * @param friend 添加的好友id
+   */
+  async permitFriend(uid: number, friend: number) {
+    await this.removeFromFriendList(uid, friend, "friendres");
+    await this.addToFriendList(uid, friend, "friends");
+    await this.removeFromFriendList(friend, uid, "friendreq");
+    await this.addToFriendList(friend, uid, "friends");
+  }
+
+  /**
+   * 拒绝好友请求
+   * @param uid
+   * @param friend 拒绝的好友id
+   */
+  async refuseFriend(uid: number, friend: number) {
+    await this.removeFromFriendList(uid, friend, "friendres");
+    await this.removeFromFriendList(friend, uid, "friendreq");
+  }
+
+  private async removeFromFriendList(
+    uid: number,
+    friend: number,
+    listname: "friends" | "friendreq" | "friendres"
+  ) {
+    let friendList = JSON.parse(
+      (await this.findByUid(uid))[listname]
+    ) as number[];
+    const index = friendList.indexOf(friend);
+    if (index < 0) {
+      throw new Error(`${uid} List: friend ${friend} not exist in ${listname}`);
+    }
+    friendList.splice(index, 1);
+    await this.updateUser(uid, JSON.stringify(friendList), "friends");
+  }
+
+  private async addToFriendList(
+    uid: number,
+    friend: number,
+    listname: "friends" | "friendreq" | "friendres"
+  ) {
+    const friendList = JSON.parse(
+      (await this.findByUid(uid))[listname]
+    ) as number[];
+    const index = friendList.indexOf(friend);
+    if (index !== -1) {
+      throw new Error(
+        `${uid} List: friend ${friend} already exist in ${listname}`
+      );
+    }
+    friendList.push(friend);
+    await this.updateUser(uid, JSON.stringify(friendList), "friends");
   }
 
   /**
    * 查找用户的基础函数
-   * @param text 搜索文本 uid: number | email: string | phone: string
+   * @param text 内容类型 uid: number | email: string | phone: string
    * @param type 文本类型 "uid" | "email" | "phone"
    * @param active 账户是否启用
    * @returns Promise<USER.UserDbItem> without password
@@ -388,10 +514,10 @@ export class UserService {
   /**
    * ## 新增用户
    * 失败时抛出USER.DBError类型错误
-   * @param email 
-   * @param nickname 
-   * @param password 
-   * @param phone 
+   * @param email
+   * @param nickname
+   * @param password
+   * @param phone
    * @returns Promise<boolean>
    */
   private async insertUser(
@@ -401,7 +527,9 @@ export class UserService {
     phone?: string
   ) {
     return new Promise<boolean>((resolve, reject) => {
-      const stmt = this.db.prepare("INSERT INTO user VALUES (?,?,?,?,?,?,?,?)");
+      const stmt = this.db.prepare(
+        "INSERT INTO user VALUES (?,?,?,?,?,?,?,?,?,?,?)"
+      );
       stmt.run(
         null,
         email,
@@ -410,6 +538,9 @@ export class UserService {
         password,
         USER.Role.guest,
         Date.now(),
+        "[]",
+        "[]",
+        "[]",
         true
       );
       stmt.finalize((err) => {
@@ -422,7 +553,7 @@ export class UserService {
   /**
    * ## 删除用户
    * 失败时抛出USER.DBError类型错误
-   * @param uid 
+   * @param uid
    * @returns Promise<boolean>
    */
   private async deleteUser(uid: number) {
@@ -439,15 +570,23 @@ export class UserService {
   /**
    * ## 更新用户信息
    * 失败时抛出USER.DBError类型错误
-   * @param uid 
-   * @param text 搜索文本 uid: number | email: string | phone: string
-   * @param type 文本类型 "uid" | "email" | "phone"
+   * @param uid
+   * @param text 内容类型 uid: number | email: string | phone: string
+   * @param type 文本类型 "uid" | "email" | "phone" | "friends"
    * @returns Promise<boolean>
    */
   private async updateUser(
     uid: number,
     text: string | number,
-    type: "email" | "phone" | "nickname" | "password" | "role"
+    type:
+      | "email"
+      | "phone"
+      | "nickname"
+      | "password"
+      | "role"
+      | "friends"
+      | "friendreq"
+      | "friendres"
   ) {
     return new Promise<boolean>((resolve, reject) => {
       const stmt = this.db.prepare(`UPDATE user SET ${type}=(?) WHERE uid=(?)`);

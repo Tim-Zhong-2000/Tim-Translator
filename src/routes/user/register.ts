@@ -28,6 +28,9 @@ async function doRegister(req: Request, res: Response) {
     email: email,
     phone: phone,
     role: role,
+    friends: [],
+    friendreq: [],
+    friendres: [],
   };
   res.status(201).json(req.session.user);
 }

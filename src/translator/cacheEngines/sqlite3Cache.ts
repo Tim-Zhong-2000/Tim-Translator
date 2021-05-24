@@ -33,7 +33,7 @@ export class SqliteCache extends CacheEngine<sqlite3.Database> {
     srcLang: string,
     destLang: string
   ): Promise<Payload> {
-    const reqHash = this.generateHashKey(
+    const reqHash = CacheEngine.generateHashKey(
       src,
       srcLang,
       destLang,
@@ -78,7 +78,7 @@ export class SqliteCache extends CacheEngine<sqlite3.Database> {
       ttsSrc,
       ttsDest,
     } = payload;
-    const reqHash = this.generateHashKey(
+    const reqHash = CacheEngine.generateHashKey(
       src,
       srcLang,
       destLang,

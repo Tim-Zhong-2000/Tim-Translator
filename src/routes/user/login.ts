@@ -30,6 +30,9 @@ router.post("/", async (req: Request, res: Response) => {
     email: email,
     phone: phone,
     role: role,
+    friends: await req.userService.getFriendDetail(uid, "friends"),
+    friendreq: await req.userService.getFriendDetail(uid, "friendreq"),
+    friendres: await req.userService.getFriendDetail(uid, "friendres"),
   };
   res.json(req.session.user);
 });
