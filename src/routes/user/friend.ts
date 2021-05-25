@@ -146,7 +146,7 @@ router.post("/res/:friendid", async (req: Request, res: Response) => {
 router.delete("/res/:friendid", async (req: Request, res: Response) => {
   const friendId = Number(req.params.friendid);
   try {
-    if (!(await isUserExistInList(req, friendId, "friends"))) {
+    if (!(await isUserExistInList(req, friendId, "friendres"))) {
       res.status(400).json(errBody(400, "请求异常"));
       return;
     }

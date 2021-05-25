@@ -460,7 +460,7 @@ export class UserService {
       throw new Error(`${uid} List: friend ${friend} not exist in ${listname}`);
     }
     friendList.splice(index, 1);
-    await this.updateUser(uid, JSON.stringify(friendList), "friends");
+    await this.updateUser(uid, JSON.stringify(friendList), listname);
   }
 
   private async addToFriendList(
