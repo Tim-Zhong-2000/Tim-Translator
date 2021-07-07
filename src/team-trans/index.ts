@@ -3,11 +3,9 @@
  * @author Tim-Zhong-2000
  */
 
-import CONFIG from "../utils/config";
 import ISO963_1 from "../types/ISO963";
 import { CacheEngine } from "../translator/abstract/cacheEngine";
 import { Payload, TranslateLevel } from "../types/Translator";
-import { checkArrayType, NumberChecker } from "../utils/checkArrayType";
 import { generatePayload } from "../utils/generatePayload";
 import { USER } from "../types/User";
 import { PrismaClient } from "@prisma/client";

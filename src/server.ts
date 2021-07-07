@@ -18,6 +18,7 @@ import serviceDiscovery from "./routes/serviceDiscovery";
 
 import { USER } from "./types/User";
 import { UserService } from "./user/UserService";
+import checkConfig from "./utils/checkConfig";
 
 declare module "express-session" {
   interface Session {
@@ -31,6 +32,7 @@ declare module "express" {
   }
 }
 
+checkConfig();
 // express初始化
 const app = express();
 

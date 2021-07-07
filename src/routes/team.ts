@@ -6,6 +6,7 @@ import express, { Request, Response, NextFunction } from "express";
 import { TeamTrans } from "../team-trans";
 import ISO963_1 from "../types/ISO963";
 import { USER } from "../types/User";
+import CONFIG from "../utils/config";
 import { msgBody } from "../utils/msgBody";
 import { checkLogin } from "../utils/userSession";
 
@@ -13,12 +14,10 @@ const teamTranslator = new TeamTrans();
 
 const router = express.Router();
 
-router.use(checkLogin());
-
 /**
  * ## 获取人工翻译
- * @param req 
- * @param res 
+ * @param req
+ * @param res
  */
 const getTranslate = async (req: Request, res: Response) => {
   const { src, srcLang, destLang } = req.params;
@@ -40,8 +39,8 @@ const getTranslate = async (req: Request, res: Response) => {
 
 /**
  * ## 添加/更新翻译
- * @param req 
- * @param res 
+ * @param req
+ * @param res
  */
 const addTranslate = async (req: Request, res: Response) => {
   const { src, srcLang, dest, destLang } = req.params;
@@ -63,8 +62,8 @@ const addTranslate = async (req: Request, res: Response) => {
 
 /**
  * ## 删除翻译
- * @param req 
- * @param res 
+ * @param req
+ * @param res
  */
 const deleteTranslate = async (req: Request, res: Response) => {
   const { src, srcLang, destLang } = req.params;
@@ -81,8 +80,15 @@ const deleteTranslate = async (req: Request, res: Response) => {
   }
 };
 
-router.get("/:srcLang/:destLang/:src", getTranslate);
-router.post("/:srcLang/:destLang/:src/:dest", addTranslate);
-router.delete("/:srcLang/:destLang/:src", deleteTranslate);
+if (CONFIG["team-trans"].enabled) {
+  router.use(checkLogin());
+  router.get("/:srcLang/:destLang/:src", getTranslate);
+  router.post("/:srcLang/:destLang/:src/:dest", addTranslate);
+  router.delete("/:srcLang/:destLang/:src", deleteTranslate);
+} else {
+  router.use("/", (_req, res) => {
+    res.status(400).json(msgBody("team-trans服务未启用"));
+  });
+}
 
 export default router;

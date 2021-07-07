@@ -1,6 +1,7 @@
 {
   "baidu": {
     "enabled": true,
+    "charging": false,
     "translatorSetting": {
       "gtk": "",
       "cookie": "",
@@ -23,6 +24,7 @@
   },
   "baiduapi": {
     "enabled": false,
+    "charging": true,
     "translatorSetting": {
       "APPID": "",
       "KEY": "",
@@ -44,6 +46,7 @@
   },
   "google": {
     "enabled": true,
+    "charging": false,
     "translatorSetting": {
       "UA": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.190 Safari/537.36"
     },
@@ -61,19 +64,22 @@
       "removeSpaceLangs": ["jp", "zh"]
     }
   },
+  "user-system": {
+    "enabled": true
+  },
   "team-trans": {
+    "enabled": true,
     "db": {
       "host": "./team.db"
     }
   },
   "paddleocr": {
-    "url": "http://172.18.198.205:6688"
+    "enabled": false,
+    "charging": false,
+    "url": ""
   },
   "serverConfig": {
     "listen": "0.0.0.0",
-    "port": 3000,
-    "translator": true,
-    "textractor": false,
-    "ocr": false
+    "port": 3000
   }
 }
