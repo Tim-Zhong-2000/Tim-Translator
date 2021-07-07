@@ -11,7 +11,7 @@
 - [ ] OCR上游 - Tesseract
 - [ ] 语种识别
 - [ ] TTS上游 - 讯飞
-- [ ] 
+- [ ] TTS上游 - 百度
 
 ## BasicUsage / 基础用法
 1. clone the repositories / 克隆此仓库
@@ -47,16 +47,5 @@ git clone https://github.com/Tim-Zhong-2000/Translator.git
 cd Translator
 docker build tim-translator:1.0 .
 ```
-## 所需依赖
-1. `axios` 用于请求翻译api
-2. `cookie-parser` 用于实现用户态
-3. `cors` 允许跨域中间件（调试）
-4. `express` HTTP服务器
-5. `express-session` session中间件
-6. `md5` 密码哈希（不安全）
-7. `morgan` 日志中间件
-8. `multer` 处理form-data的中间件
-9. `nodemon` 调试工具
-10. `qs` 构建URL工具
-11. `sqlite3` 数据库引擎
-12. `typescript` 编译器
+
+## 配置文件
