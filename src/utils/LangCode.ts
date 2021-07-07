@@ -1,4 +1,4 @@
-import ISO963_1 from "../type/ISO963";
+import ISO963_1 from "../types/ISO963";
 
 export function getBaiduLangCode(code: ISO963_1 | "auto") {
   switch (code) {

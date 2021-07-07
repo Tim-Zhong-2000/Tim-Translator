@@ -4,7 +4,7 @@
  */
 
 import express, { NextFunction, Request, Response } from "express";
-import { USER } from "../../type/User";
+import { USER } from "../../types/User";
 import { msgBody } from "../../utils/msgBody";
 import { checkLogin, roleControl } from "../../utils/userSession";
 

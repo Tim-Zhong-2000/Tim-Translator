@@ -4,7 +4,7 @@
  */
 
 import express, { Request, Response } from "express";
-import { USER } from "../../type/User";
+import { USER } from "../../types/User";
 import { checkLogin, roleControl } from "../../utils/userSession";
 
 const router = express.Router();

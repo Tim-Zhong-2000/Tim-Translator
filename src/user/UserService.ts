@@ -1,5 +1,4 @@
-import { USER } from "../type/User";
-import { Database } from "../type/type";
+import { USER } from "../types/User";
 import { PrismaClient, User } from "@prisma/client";
 import { check, getHash } from "../utils/bcrypt";
 
@@ -21,7 +20,7 @@ const selectUidNameRole = {
 
 export class UserService {
   db: PrismaClient;
-  constructor(dbConfig: Database) {
+  constructor() {
     this.db = new PrismaClient();
     this.initUser();
   }

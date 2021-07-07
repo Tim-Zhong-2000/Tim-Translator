@@ -16,7 +16,7 @@ import google from "./routes/google";
 import team from "./routes/team";
 import serviceDiscovery from "./routes/serviceDiscovery";
 
-import { USER } from "./type/User";
+import { USER } from "./types/User";
 import { UserService } from "./user/UserService";
 
 declare module "express-session" {

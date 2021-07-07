@@ -66,16 +66,12 @@
       "host": "./team.db"
     }
   },
-  "paddleocr":{
+  "paddleocr": {
     "url": "http://172.18.198.205:6688"
-  }
-  ,
+  },
   "serverConfig": {
     "listen": "0.0.0.0",
     "port": 3000,
-    "db": {
-      "host": "./user.db"
-    },
     "translator": true,
     "textractor": false,
     "ocr": false

@@ -4,7 +4,7 @@
  */
 
 import { DefaultFilter } from "../filter/filter";
-import { Payload } from "../../type/Translator";
+import { Payload } from "../../types/Translator";
 import { CacheEngine } from "./cacheEngine";
 import { TranslateEngine } from "./translateEngine";
 

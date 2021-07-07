@@ -1,6 +1,6 @@
 import { PrismaClient, Translate } from "@prisma/client";
-import { Payload } from "../../type/Translator";
-import { USER } from "../../type/User";
+import { Payload } from "../../types/Translator";
+import { USER } from "../../types/User";
 import { generatePayload } from "../../utils/generatePayload";
 import { CacheEngine } from "../abstract/cacheEngine";
 

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { USER } from "../type/User";
+import { USER } from "../types/User";
 import { msgBody } from "./msgBody";
 
 /**

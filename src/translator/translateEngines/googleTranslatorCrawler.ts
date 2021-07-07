@@ -5,9 +5,9 @@
 
 import axios from "axios";
 import { TranslateEngine } from "../abstract/translateEngine";
-import { Payload, TranslateLevel } from "../../type/Translator";
+import { Payload, TranslateLevel } from "../../types/Translator";
 import { generatePayload } from "../../utils/generatePayload";
-import ISO963_1 from "../../type/ISO963";
+import ISO963_1 from "../../types/ISO963";
 import { getGoogleLangCode } from "../../utils/LangCode";
 
 export class GoogleTranslatorCrawler extends TranslateEngine {

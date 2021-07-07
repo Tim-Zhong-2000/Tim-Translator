@@ -4,8 +4,8 @@
  */
 import express, { Request, Response, NextFunction } from "express";
 import { TeamTrans } from "../team-trans";
-import ISO963_1 from "../type/ISO963";
-import { USER } from "../type/User";
+import ISO963_1 from "../types/ISO963";
+import { USER } from "../types/User";
 import { msgBody } from "../utils/msgBody";
 import { checkLogin } from "../utils/userSession";
 

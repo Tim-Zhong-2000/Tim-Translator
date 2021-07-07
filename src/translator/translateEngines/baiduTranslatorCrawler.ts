@@ -10,10 +10,10 @@ import {
   BaiduTranslatorConfig,
   BaiduPayload,
   TranslateLevel,
-} from "../../type/Translator";
+} from "../../types/Translator";
 import { generatePayload } from "../../utils/generatePayload";
 import { getBaiduLangCode } from "../../utils/LangCode";
-import ISO963_1 from "../../type/ISO963";
+import ISO963_1 from "../../types/ISO963";
 
 export class BaiduTranslatorCrawler extends TranslateEngine {
   configReady = false;

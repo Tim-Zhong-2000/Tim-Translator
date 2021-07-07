@@ -9,9 +9,9 @@ import { TranslateEngine } from "../abstract/translateEngine";
 import {
   BaiduTranslatorAPIConfig,
   TranslateLevel,
-} from "../../type/Translator";
+} from "../../types/Translator";
 import { generatePayload } from "../../utils/generatePayload";
-import ISO963_1 from "../../type/ISO963";
+import ISO963_1 from "../../types/ISO963";
 import { getBaiduLangCode } from "../../utils/LangCode";
 
 export class BaiduTranslatorAPI extends TranslateEngine {

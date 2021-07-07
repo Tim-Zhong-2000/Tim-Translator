@@ -1,5 +1,18 @@
 # Tim-Translator
-提供REST API接口的翻译服务器，中转多个上游翻译服务，方便程序开发
+翻译器后端仓库
+
+## 功能列表
+- [x] 基础用户系统
+- [x] 翻译上游 - 百度翻译web
+- [x] 翻译上游 - 百度翻译api
+- [x] 翻译上游 - 谷歌翻译web
+- [x] 合作翻译模块`team-trans`
+- [ ] OCR上游 - Paddle
+- [ ] OCR上游 - Tesseract
+- [ ] 语种识别
+- [ ] TTS上游 - 讯飞
+- [ ] 
+
 ## BasicUsage / 基础用法
 1. clone the repositories / 克隆此仓库
 2. run `npm install` / 运行`npm install`
@@ -9,7 +22,7 @@
 6. Fill in the front-end `translation server` with `http://localhost:3000`and save / 在前端`翻译服务器`处填入`http://localhost:3000`并保存。
 
 ## Docker(推荐)
-推荐使用docker运行该项目。**本项目已经连接到Docker hub，镜像名为`timzhong/translator`**
+推荐使用docker运行该项目。
 
 ### 使用docker启动容器
 ```

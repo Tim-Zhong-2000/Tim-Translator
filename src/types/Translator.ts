@@ -1,5 +1,3 @@
-import { Database } from "./type";
-
 export interface BaiduTranslatorConfig {
   gtk: string;
   cookie: string;

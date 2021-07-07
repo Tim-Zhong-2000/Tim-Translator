@@ -5,7 +5,7 @@
 
 import { User } from "@prisma/client";
 import express, { Request, Response } from "express";
-import { USER } from "../../type/User";
+import { USER } from "../../types/User";
 import { checkPayload } from "../../utils/checkPayload";
 import { msgBody } from "../../utils/msgBody";
 
