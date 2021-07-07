@@ -69,11 +69,9 @@ export class DefaultTranslatorManager<
 
     try {
       console.time("readCache");
-      const payload = await this.readCache(src, srcLang, destLang);
-      payload.success = true;
-      return payload;
+      return await this.readCache(src, srcLang, destLang);
     } catch (err) {
-      console.log(err);
+      console.log("MISS");
     } finally {
       console.timeEnd("readCache");
     }
@@ -85,7 +83,9 @@ export class DefaultTranslatorManager<
         srcLang,
         destLang
       );
-      this.writeCache(payload);
+      if (payload.success) {
+        this.writeCache(payload);
+      }
       return payload;
     } catch (err) {
       return generatePayload(
@@ -114,10 +114,6 @@ export class DefaultTranslatorManager<
     srcLang: string,
     destLang: string
   ): Promise<Payload> {
-    return this.cacheEngine.fetch(
-      src,
-      srcLang,
-      destLang
-    );
+    return this.cacheEngine.fetch(src, srcLang, destLang);
   }
 }

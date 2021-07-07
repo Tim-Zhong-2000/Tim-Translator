@@ -77,8 +77,7 @@ const deleteTranslate = async (req: Request, res: Response) => {
     );
     res.send({ msg: "删除翻译成功" });
   } catch (err) {
-    console.error(err);
-    res.status(500).json(msgBody("服务器错误，删除翻译失败"));
+    res.status(500).json(msgBody(err.message));
   }
 };
 

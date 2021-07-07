@@ -1,4 +1,3 @@
-import sqlite3 = require("sqlite3");
 import md5 from "md5";
 import { USER } from "../type/User";
 import { Database } from "../type/type";
@@ -288,6 +287,28 @@ export class UserService {
       },
       select: {
         To: { select: selectUidNameRole },
+      },
+    });
+  }
+
+  async deleteFriendRequest(uid: number, friendId: number) {
+    const request = await this.db.friend.findUnique({
+      where: {
+        fromUid_toUid: {
+          fromUid: uid,
+          toUid: friendId,
+        },
+      },
+    });
+    if (!request || request.pass) {
+      throw new Error("好友请求不存在");
+    }
+    return await this.db.friend.delete({
+      where: {
+        fromUid_toUid: {
+          fromUid: uid,
+          toUid: friendId,
+        },
       },
     });
   }

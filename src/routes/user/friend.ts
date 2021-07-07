@@ -12,11 +12,6 @@ const router = express.Router();
 
 router.use(checkLogin());
 
-// 获取缓存中的好友列表
-router.get("/list", async (req: Request, res: Response) => {
-  res.json(msgBody("获取缓存好友列表成功", req.session.user.friends));
-});
-
 // 更新缓存
 router.copy("/", checkPayload({}), async (req: Request, res: Response) => {
   try {
@@ -32,6 +27,18 @@ router.copy("/", checkPayload({}), async (req: Request, res: Response) => {
   }
 });
 
+// 获取缓存中的好友信息以及好友请求
+router.get("/list", async (req: Request, res: Response) => {
+  res.json(
+    msgBody("获取缓存好友列表成功", {
+      friends: req.session.user.friends,
+      friendreq: req.session.user.friendreq,
+      friendres: req.session.user.friendres,
+    })
+  );
+});
+
+// 删除已添加的好友
 router.delete(
   "/list/:friendid",
   checkPayload({}),
@@ -56,15 +63,45 @@ router.post(
   checkPayload({}),
   async (req: Request, res: Response) => {
     const friendId = Number(req.params.friendid);
+    const existArr = req.session.user.friendreq.filter(
+      (r) => r.uid === friendId
+    );
+    if (existArr.length > 0) {
+      res.json(msgBody(`你已经向 ${existArr[0].name} 发送过好友请求`));
+      return;
+    }
     try {
       const newRequest = await req.userService.addFriend(
         req.session.user.uid,
         friendId
       );
       req.session.user.friendreq.push(newRequest.To);
-      res.json(msgBody("添加好友成功", newRequest));
+      res.json(
+        msgBody(`向 ${newRequest.To.name} 发送好友请求成功`, newRequest)
+      );
     } catch (err) {
       res.status(500).json(msgBody("添加好友失败"));
+    }
+  }
+);
+
+// 删除好友请求
+router.delete(
+  "/req/:friendid",
+  checkPayload({}),
+  async (req: Request, res: Response) => {
+    const friendId = Number(req.params.friendid);
+    try {
+      const result = await req.userService.deleteFriendRequest(
+        req.session.user.uid,
+        friendId
+      );
+      req.session.user.friendreq = req.session.user.friendreq.filter(
+        (fReq) => fReq.uid !== friendId
+      );
+      res.json(msgBody("删除好友请求成功", result));
+    } catch (err) {
+      res.status(500).json(msgBody(err.message));
     }
   }
 );

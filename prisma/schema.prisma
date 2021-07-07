@@ -45,7 +45,6 @@ model OCR {
   fileId String @id
   result String
   level  Int
-  
 }
 
 model Friend {

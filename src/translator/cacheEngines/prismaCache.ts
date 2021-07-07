@@ -19,6 +19,7 @@ export class PrismaCache extends CacheEngine<PrismaClient> {
         },
       },
     });
+    if (!result) throw new Error("MISS");
     return generatePayload(
       true,
       result.level,
@@ -57,6 +58,7 @@ export class PrismaCache extends CacheEngine<PrismaClient> {
         dest: payload.dest,
       },
     });
+    return result;
   }
 
   resultToPayload(results: Translate[]) {

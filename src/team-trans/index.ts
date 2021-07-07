@@ -4,7 +4,6 @@
  */
 
 import CONFIG from "../utils/config";
-import sqlite3 = require("sqlite3");
 import ISO963_1 from "../type/ISO963";
 import { CacheEngine } from "../translator/abstract/cacheEngine";
 import { Payload, TranslateLevel } from "../type/Translator";
@@ -70,7 +69,7 @@ export class TeamTrans {
       )
     );
   }
- 
+
   /**
    * ## 添加一条人工翻译
    * 如果已存在，更新当前翻译
@@ -81,7 +80,7 @@ export class TeamTrans {
    * @param provider 当前用户uid
    * @param privacy
    */
-   async add(
+  async add(
     src: string,
     srcLang: ISO963_1,
     dest: string,
@@ -127,13 +126,27 @@ export class TeamTrans {
     destLang: ISO963_1,
     provider: number
   ) {
-    return await this.db.translate.delete({
-      where: {
-        hash_userUid: {
-          hash: CacheEngine.generateHashKey(src, srcLang, destLang),
-          userUid: provider,
-        },
-      },
-    });
+    const hash = CacheEngine.generateHashKey(src, srcLang, destLang);
+    const exist =
+      (await this.db.translate.count({
+        where: { hash: hash, userUid: provider },
+      })) > 0;
+    if (exist) {
+      try {
+        return await this.db.translate.delete({
+          where: {
+            hash_userUid: {
+              hash: hash,
+              userUid: provider,
+            },
+          },
+        });
+      } catch (err) {
+        console.error(err);
+        throw new Error("数据库错误，删除失败");
+      }
+    } else {
+      throw new Error("翻译不存在，无法删除");
+    }
   }
 }

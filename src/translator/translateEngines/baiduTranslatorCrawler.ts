@@ -35,7 +35,7 @@ export class BaiduTranslatorCrawler extends TranslateEngine {
       this.setConfig(config);
     } else {
       this.UA =
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.190 Safari/537.36";
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36 Edg/91.0.864.64";
       this.autoConfig();
     }
   }
@@ -121,6 +121,9 @@ export class BaiduTranslatorCrawler extends TranslateEngine {
     srcLang: ISO963_1 = "ja",
     destLang: ISO963_1 = "zh_CN"
   ) {
+    // 转换为百度接口的语言代码
+    const baiduSrcLang = getBaiduLangCode(srcLang);
+    const baiduDestLang = getBaiduLangCode(destLang);
     if (srcLang === destLang) {
       return generatePayload(
         true,
@@ -137,10 +140,8 @@ export class BaiduTranslatorCrawler extends TranslateEngine {
       throw new Error("Please WAIT: auto config is not finished");
 
     const res = await axios.post(
-      `https://fanyi.baidu.com/v2transapi?from=${getBaiduLangCode(
-        srcLang
-      )}&to=${getBaiduLangCode(destLang)}`,
-      this.getBody(src, srcLang, destLang),
+      `https://fanyi.baidu.com/v2transapi?from=${baiduSrcLang}&to=${baiduDestLang}`,
+      this.getBody(src, baiduSrcLang, baiduDestLang),
       { headers: this.getHeader() }
     );
     try {

@@ -28,7 +28,7 @@ router.post(
     try {
       userinfo = await req.userService.login(req.body as USER.LoginPayload);
     } catch (err) {
-      res.status(403).json(msgBody("登录失败"));
+      res.status(403).json(msgBody(err.message));
       req.session.destroy(() => {});
       return;
     }

@@ -7,7 +7,6 @@ import axios from "axios";
 import md5 from "md5";
 import { TranslateEngine } from "../abstract/translateEngine";
 import {
-  Payload,
   BaiduTranslatorAPIConfig,
   TranslateLevel,
 } from "../../type/Translator";
@@ -27,8 +26,7 @@ export class BaiduTranslatorAPI extends TranslateEngine {
 
   constructor(
     private provider: { uid: number; name: string },
-
-    config: BaiduTranslatorAPIConfig,
+    config: BaiduTranslatorAPIConfig
   ) {
     super();
     if (!!config) {
@@ -51,6 +49,9 @@ export class BaiduTranslatorAPI extends TranslateEngine {
     srcLang: ISO963_1 = "ja",
     destLang: ISO963_1 = "zh_CN"
   ) {
+    // 转换为百度接口的语言代码
+    const baiduSrcLang = getBaiduLangCode(srcLang);
+    const baiduDestLang = getBaiduLangCode(destLang);
     if (srcLang === destLang) {
       return generatePayload(
         true,
@@ -81,9 +82,9 @@ export class BaiduTranslatorAPI extends TranslateEngine {
     }
     const res = await axios.get(
       `https://fanyi-api.baidu.com/api/trans/vip/translate` +
-        `?q=${src}&from=${getBaiduLangCode(srcLang)}&to=${getBaiduLangCode(
-          destLang
-        )}&appid=${this.APPID}&salt=${this.SALT}&sign=${this.sign(src)}`
+        `?q=${src}&from=${baiduSrcLang}&to=${baiduDestLang}&appid=${
+          this.APPID
+        }&salt=${this.SALT}&sign=${this.sign(src)}`
     );
     if (!!res && !!res.data) {
       try {
