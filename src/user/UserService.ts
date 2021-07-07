@@ -1,7 +1,7 @@
-import md5 from "md5";
 import { USER } from "../type/User";
 import { Database } from "../type/type";
 import { PrismaClient, User } from "@prisma/client";
+import { check, getHash } from "../utils/bcrypt";
 
 const selectWithoutPassword = {
   uid: true,
@@ -44,7 +44,9 @@ export class UserService {
         { name: "admin", email: "admin", password: "123456" },
         3
       );
-    } catch (err) {}
+    } catch (err) {
+      
+    }
     await this.update(3, { role: USER.Role.admin });
   }
 
@@ -60,7 +62,7 @@ export class UserService {
         email: payload.email,
       },
     });
-    if (!user || user.password !== payload.password) {
+    if (!user || !check(payload.password, user.password)) {
       throw new Error("邮箱不存在或密码错误");
     } else {
       delete user.password;
@@ -83,16 +85,18 @@ export class UserService {
     if (emailCount !== 0) {
       throw new Error("邮箱已存在");
     }
+    const hashPassword = await getHash(payload.password);
     const newUser = await this.db.user.create({
       data: {
         uid: uid,
         name: payload.name,
         email: payload.email,
-        password: payload.password,
+        password: hashPassword,
         role: USER.Role.user,
       },
       select: selectWithoutPassword,
     });
+    // 初始资源
     await this.db.resource.create({
       data: {
         User: { connect: { uid: newUser.uid } },
