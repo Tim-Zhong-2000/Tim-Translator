@@ -43,9 +43,7 @@ export class UserService {
         { name: "admin", email: "admin", password: "123456" },
         3
       );
-    } catch (err) {
-      
-    }
+    } catch (err) {}
     await this.update(3, { role: USER.Role.admin });
   }
 
@@ -216,7 +214,16 @@ export class UserService {
     });
   }
 
-  async update(uid: number, payload: Partial<Omit<User, "uid" | "create_at">>) {
+  /**
+   * 更新用户信息
+   * @param uid
+   * @param payload
+   * @returns
+   */
+  async update(
+    uid: number,
+    payload: Partial<Omit<User, "uid" | "create_at" | "email" | "phone">>
+  ) {
     return await this.db.user.update({
       where: {
         uid: uid,
@@ -340,5 +347,95 @@ export class UserService {
         },
       },
     });
+  }
+
+  async addOcrRecord(uid: number, fileId: string, result: string) {
+    return await this.db.oCR.upsert({
+      where: {
+        fileId_userUid: {
+          fileId: fileId,
+          userUid: uid,
+        },
+      },
+      create: {
+        fileId: fileId,
+        result: result,
+        level: 0,
+        User: {
+          connect: { uid: uid },
+        },
+        isDelete: false,
+      },
+      update: {
+        result: result,
+      },
+    });
+  }
+
+  async correctOcrRecord(uid: number, fileId: string, result: string) {
+    return await this.db.oCR.update({
+      where: {
+        fileId_userUid: {
+          fileId: fileId,
+          userUid: uid,
+        },
+      },
+      data: {
+        result: result,
+      },
+    });
+  }
+
+  async getMyOcr(uid: number, limit: number, offset: number) {
+    const ocrRawList = await this.db.oCR.findMany({
+      where: {
+        userUid: uid,
+        isDelete: false,
+      },
+      take: limit,
+      skip: offset,
+    });
+    return ocrRawList;
+  }
+
+  async deleteOcrRecordById(uid: number, fileId: string) {
+    return await this.db.oCR.update({
+      where: {
+        fileId_userUid: {
+          fileId: fileId,
+          userUid: uid,
+        },
+      },
+      data: {
+        isDelete: true,
+      },
+    });
+  }
+
+  async deleteOcrRecordByText(uid: number, text: string) {
+    const records = await this.db.oCR.findMany({
+      where: {
+        result: {
+          contains: text,
+        },
+        userUid: uid,
+      },
+      take: 100,
+    });
+    const deleteQuerys = records.map((record) =>
+      this.db.oCR.update({
+        where: {
+          fileId_userUid: {
+            fileId: record.fileId,
+            userUid: uid,
+          },
+        },
+        data: {
+          isDelete: true,
+        },
+      })
+    );
+    Promise.all(deleteQuerys);
+    return deleteQuerys.length;
   }
 }

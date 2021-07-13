@@ -39,31 +39,36 @@ model Translate {
 }
 
 model OCR {
-  User   User   @relation(fields: [userUid], references: [uid])
+  User    User @relation(fields: [userUid], references: [uid])
   userUid Int
 
-  fileId String @id
+  fileId String
   result String
   level  Int
+
+  isDelete Boolean
+
+  @@unique([fileId, userUid])
+  @@index([userUid])
 }
 
 model Friend {
-  From    User    @relation(name: "from", fields: [fromUid], references: [uid])
-  To      User    @relation(name: "to", fields: [toUid], references: [uid])
+  From    User @relation(name: "from", fields: [fromUid], references: [uid])
+  To      User @relation(name: "to", fields: [toUid], references: [uid])
   fromUid Int
   toUid   Int
-  
-  pass    Boolean
+
+  pass Boolean
 
   @@unique([fromUid, toUid])
 }
 
 model Resource {
-  userUid   Int  @id
-  User      User @relation(fields: [userUid], references: [uid])
+  userUid Int  @id
+  User    User @relation(fields: [userUid], references: [uid])
 
-  translate Int  @default(0)
-  ocr       Int  @default(0)
+  translate Int @default(0)
+  ocr       Int @default(0)
 }
 
 generator client {

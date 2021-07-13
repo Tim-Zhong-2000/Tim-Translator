@@ -14,6 +14,7 @@ import baidu from "./routes/baidu";
 import baiduapi from "./routes/baiduapi";
 import google from "./routes/google";
 import team from "./routes/team";
+import ocr from "./routes/ocr";
 import serviceDiscovery from "./routes/serviceDiscovery";
 
 import { USER } from "./types/User";
@@ -45,7 +46,7 @@ app.use(morgan("combined"));
 
 // post body
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(express.json({limit: "1mb"}));
 
 // append UserService for all request
 app.use(UserServiceMiddleware);
@@ -70,6 +71,7 @@ app.use("/baidu", baidu);
 app.use("/baiduapi", baiduapi);
 app.use("/google", google);
 app.use("/team", team);
+app.use("/ocr", ocr);
 app.use("/servicediscovery", serviceDiscovery);
 
 // express启动配置
