@@ -39,14 +39,14 @@ const app = express();
 
 // 中间件
 // allow cors
-app.use(cors());
+app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 
 // logger
 app.use(morgan("combined"));
 
 // post body
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json({limit: "1mb"}));
+app.use(express.json({ limit: "1mb" }));
 
 // append UserService for all request
 app.use(UserServiceMiddleware);
@@ -57,22 +57,22 @@ app.use(
   session({
     secret: "a1@a1@",
     name: "tim-translator",
-    cookie: { maxAge: 30 * 60 * 1000 },
+    cookie: { maxAge: 12 * 60 * 60 * 1000 },
     resave: false,
     saveUninitialized: true,
   })
 );
 
 // 路由
-app.use("/", index);
-app.use("/user", user);
-app.use("/info", info);
-app.use("/baidu", baidu);
-app.use("/baiduapi", baiduapi);
-app.use("/google", google);
-app.use("/team", team);
-app.use("/ocr", ocr);
-app.use("/servicediscovery", serviceDiscovery);
+app.use("/api", index);
+app.use("/api/user", user);
+app.use("/api/info", info);
+app.use("/api/baidu", baidu);
+app.use("/api/baiduapi", baiduapi);
+app.use("/api/google", google);
+app.use("/api/team", team);
+app.use("/api/ocr", ocr);
+app.use("/api/servicediscovery", serviceDiscovery);
 
 // express启动配置
 const PORT = CONFIG.serverConfig.port;

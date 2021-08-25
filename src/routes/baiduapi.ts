@@ -33,7 +33,7 @@ if (CONFIG["baiduapi"].enabled) {
   );
 
   router.get("/langlist", (_req, res) => {
-    res.json(LangList);
+    res.json(msgBody("获取语言列表成功", LangList));
   });
 
   router.get("/:srcLang/:destLang/:src", async (req, res) => {

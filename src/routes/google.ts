@@ -33,13 +33,13 @@ if (CONFIG["google"].enabled) {
   );
 
   router.get("/langlist", (_req, res) => {
-    res.json(LangList);
+    res.json(msgBody("获取语言列表成功", LangList));
   });
 
   router.get("/:srcLang/:destLang/:src", async (req, res) => {
     const { src, srcLang, destLang } = req.params;
     const dest = await googleTranslateManager.translate(src, srcLang, destLang);
-    res.json(dest);
+    res.json(msgBody("获取翻译成功", dest));
   });
 } else {
   router.use((_req, res) => {

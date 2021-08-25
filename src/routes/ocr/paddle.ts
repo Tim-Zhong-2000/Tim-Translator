@@ -20,7 +20,6 @@ router.post("/base64", async (req: Request, res: Response) => {
       await axios.post(OCRUrl, { images: [payload.image] })
     ).data;
     const result = paddlePayload.results[0];
-    console.log(paddlePayload);
     await req.userService.addOcrRecord(
       req.session.user.uid,
       payload.image.slice(0, 64),
@@ -28,7 +27,6 @@ router.post("/base64", async (req: Request, res: Response) => {
     );
     res.json(result);
   } catch (err) {
-    console.log(err);
     res.status(500).json(msgBody("ocr后端异常", err));
   }
 });
